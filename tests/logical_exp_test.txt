@@ -1,6 +1,0 @@
-BEGIN
-CRT INT var1 = 5;
-SH <var1>;
-CRT INT var2 = 5;
-SH <var2>;
-FINISH

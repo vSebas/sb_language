@@ -1,0 +1,48 @@
+BEGIN
+CRT INT matrix_a(2,2);
+CRT INT matrix_b(2,2);
+CRT INT dim_Ax = 2;
+CRT INT dim_Bx = 2;
+CRT INT dim_Ay = 2;
+CRT INT dim_By = 2;
+CRT INT i;
+CRT INT j = 0;
+CRT INT elements = 0;
+CRT INT res;
+CALL ValidaMat;
+CALL LlenaMats;
+i = 0;
+SH <"Resultados">;
+FOR(i < dim_Bx, i = i +1):
+ FOR(j < dim_By, j = j +1):
+ res = matrix_a(i,j) + matrix_b(i,j);
+ SH <res>;
+ END
+END
+FINISH
+
+FUNC ValidaMat:
+ WHILE((dim_Ax =/ dim_Bx) & (dim_Ay =/ dim_By)):
+ SH <"Ingrese dimensiones de A">;
+ RD <dim_Ax,dim_Ay>;
+ SH <"Ingrese dimensiones de B">;
+ RD <dim_Bx,dim_By>;
+ END
+RET
+FUNC LlenaMats:
+ SH <"Ingrese la matriz A">;
+ FOR(i < dim_Ax, i = i +1):
+ FOR(j < dim_Ay, j = j +1): 
+ RD <elements, 1>;
+ matrix_a(i,j) = elements;
+ END
+ END
+ i = 0;
+ SH <"Ingrese la matriz B">;
+ FOR(i < dim_Bx, i = i +1):
+ FOR(j < dim_By, j = j +1): 
+ RD <elements, 1>;
+ matrix_a(i,j) = elements;
+ END
+ END
+RET

@@ -30,10 +30,22 @@ SH <arr>;
 \\RD <var, varr>;
 \\SH <var>;
 
+CRT INT var1 = 6;
+\\SH <var1>;
+CRT INT var2 = 5;
+\\SH <var2>;
+IF (var1 =? var2):
+var2 = var2 + var1;
+SH <var2>;
+NOT
+var2 = var2 - var1;
+SH <var2>;
+END
+
 FINISH
 
 \\ TO DO:
-\\ implementar leer expresiones en RD <var, expression> en vez de solo pasar un valor
+\\ implementar leer de stdin en RD, no esperar un valor RD <var, int>
 \\ check for created vars or arrays if used with CRT
 \\ que SH funcione con mas de dos argumentos
 \\ arreglar los datatypes luego de que se realicen ciertas operaciones matematicas (luego de divisiones o exponentes, cuidar los enteros,)
@@ -41,3 +53,4 @@ FINISH
 \\ habilitar inicializacion de arreglo al momento de ser declarado
 \\ cuando se redefina el valor de una matriz o variable, quitar empty de parser, puesto que se permitiria tener 'ID = ' (vacio)
 \\ probar SH con string
+\\ NO INICIALIZAR y declarar al mismo tiempo. En BASIC no es posible.
