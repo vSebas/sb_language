@@ -1,0 +1,43 @@
+BEGIN
+CRT INT arr(1,1,1);
+arr(0,0,0) = 1;
+SH <arr>;
+
+\\CRT INT var = 5;
+\\SH <var>;
+\\var = 6;
+\\SH <var>;
+\\
+\\var = 5 + 10;
+\\SH <var>;
+\\var = var + 10;
+\\SH <var>;
+\\
+\\var = 5 - 10;
+\\SH <var>;
+\\var = var / 10;
+\\SH <var>;
+\\
+\\var = 5 * 10;
+\\SH <var>;
+\\var = var / 10;
+\\SH <var>;
+\\
+\\var = 5 ^ 2;
+\\SH <var>;
+\\
+\\CRT INT varr = 7;
+\\RD <var, varr>;
+\\SH <var>;
+
+FINISH
+
+\\ TO DO:
+\\ implementar leer expresiones en RD <var, expression> en vez de solo pasar un valor
+\\ check for created vars or arrays if used with CRT
+\\ que SH funcione con mas de dos argumentos
+\\ arreglar los datatypes luego de que se realicen ciertas operaciones matematicas (luego de divisiones o exponentes, cuidar los enteros,)
+\\ checar que las dimensiones de los arreglos ingresados sean enteras
+\\ habilitar inicializacion de arreglo al momento de ser declarado
+\\ cuando se redefina el valor de una matriz o variable, quitar empty de parser, puesto que se permitiria tener 'ID = ' (vacio)
+\\ probar SH con string
