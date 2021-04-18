@@ -1,3 +1,5 @@
+// Tercera entrega: Tabla de simbolos
+// 4/18/2021
 BEGIN
 
 CRT INT var = 5;
