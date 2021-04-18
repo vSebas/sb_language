@@ -1,10 +1,12 @@
 \\ Tercera entrega: Tabla de simbolos
-\\ Archivo sin error
-\\ 4/18/2021
+\\ Archivo con error
+\\ 4-18-2021
 BEGIN
 
 CRT INT var = 5;
 SH <var>;
+
+CRT INT var;
 
 var = 6;
 SH <var>;
@@ -12,6 +14,8 @@ SH <var>;
 CRT INT varr = 7;
 RD <var, varr>;
 SH <var>;
+
+CRT INT varr;
 
 CRT INT var1 = 6;
 SH <var1>;

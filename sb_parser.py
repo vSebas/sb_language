@@ -290,7 +290,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/symbol_table/symbol_table_test.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/symbol_table/symbol_table_test_error.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     program.print_symbols()
