@@ -1,4 +1,5 @@
 BEGIN
+SH <"matrix_mult_test.txt">;
 CRT INT matrix_a(2,2);
 CRT INT matrix_b(2,2);
 CRT INT dim_Ax = 2;

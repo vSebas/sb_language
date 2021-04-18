@@ -1,4 +1,5 @@
 BEGIN
+SH <"exp_test.txt">;
 CRT INT var = 5;
 SH <var>;
 var = 6;

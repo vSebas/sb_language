@@ -403,7 +403,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/Tercera_entrega/ply/project/tests/exp_test.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/Tercera_entrega/ply/project/tests/math_exp_test.txt",  encoding="utf8") as f:
         file = f.read()
         parser.parse(file)
         # print(file)

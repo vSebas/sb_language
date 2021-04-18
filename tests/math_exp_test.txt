@@ -1,39 +1,41 @@
 BEGIN
+SH <"mat_exp_test.txt">
+
 CRT INT arr(1,1,1);
 arr(0,0,0) = 1;
 SH <arr>;
 
-\\CRT INT var = 5;
-\\SH <var>;
-\\var = 6;
-\\SH <var>;
-\\
-\\var = 5 + 10;
-\\SH <var>;
-\\var = var + 10;
-\\SH <var>;
-\\
-\\var = 5 - 10;
-\\SH <var>;
-\\var = var / 10;
-\\SH <var>;
-\\
-\\var = 5 * 10;
-\\SH <var>;
-\\var = var / 10;
-\\SH <var>;
-\\
-\\var = 5 ^ 2;
-\\SH <var>;
-\\
-\\CRT INT varr = 7;
-\\RD <var, varr>;
-\\SH <var>;
+CRT INT var = 5;
+SH <var>;
+var = 6;
+SH <var>;
+
+var = 5 + 10;
+SH <var>;
+var = var + 10;
+SH <var>;
+
+var = 5 - 10;
+SH <var>;
+var = var / 10;
+SH <var>;
+
+var = 5 * 10;
+SH <var>;
+var = var / 10;
+SH <var>;
+
+var = 5 ^ 2;
+SH <var>;
+
+CRT INT varr = 7;
+RD <var, varr>;
+SH <var>;
 
 CRT INT var1 = 6;
-\\SH <var1>;
+SH <var1>;
 CRT INT var2 = 5;
-\\SH <var2>;
+SH <var2>;
 IF (var1 =? var2):
 var2 = var2 + var1;
 SH <var2>;
