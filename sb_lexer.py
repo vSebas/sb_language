@@ -1,5 +1,5 @@
 import sys
-sys.path.append('C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/Tercera_entrega/ply')
+sys.path.append('C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply')
 # sys.path.insert(0, "..")
 import ply.lex as lex
 import sys
