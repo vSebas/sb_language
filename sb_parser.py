@@ -83,7 +83,6 @@ def p_est_id_declare(p):
     '''
     program.create_symbol(p[2],p[3],p[4])
 
-
 def p_assignment(p):
     '''
     assignment : EQUALS ID
@@ -291,9 +290,9 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/math_exp_test.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/symbol_table/symbol_table_test.txt",  encoding="utf8") as f:
         file = f.read()
-        parser.parse(file)
-        # print(file)
+    parser.parse(file)
+    program.print_symbols()
 except EOFError:
     pass

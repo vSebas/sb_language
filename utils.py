@@ -1,9 +1,16 @@
 import math
 
-class Operations:
+class Program:
     def __init__(self):
-        # self.operator = ''
-        pass
+        # Layout : 
+        # symbols_ = {variable,dict_val}
+        # dict_val = {type, value}
+        self.symbols={}
+        self.symbols_type={}
+        self.symbols_mat={}
+        self.symbols_mat_type={}
+        # super().__init__()
+    
     def oper_manager(self,operand1,oper,operand2):
         if   oper == '+':
             return operand1 + operand2
@@ -16,18 +23,12 @@ class Operations:
         elif oper == '^':
             return math.pow(operand1,operand2)
 
-
-class Program(Operations):
-    def __init__(self):
-        # Layout : 
-        # symbols_ = {variable,dict_val}
-        # dict_val = {type, value}
-        self.symbols={}
-        self.symbols_mat={}
-        super().__init__()
-    
-    # def oper_manager(self,operand1,oper,operand2):
-    #     return super().oper_manager(operand1,oper,operand2)
+    def print_symbols(self):
+        # Dictionaries are unordered, but who cares
+        i=0
+        for symbol in self.symbols_type:
+            print(i,symbol,self.symbols_type[symbol])
+            i+=1
 
     def check_in_symbols(self,symbol,value):
         if symbol in self.symbols:
@@ -43,7 +44,10 @@ class Program(Operations):
         else:
             if symbol not in self.symbols:
                 self.symbols[symbol] = None
-            self.symbols[symbol] = assignment
+                self.symbols_type[symbol] = data_type
+                self.symbols[symbol] = assignment
+            else:
+                print(f"ERROR: Already existent variable! --> {symbol}")
 
     def create_symbol_mat(self,data_type,symbol,mat,assignment=None):
         if data_type != "INT" and data_type != "FLT":
@@ -51,6 +55,7 @@ class Program(Operations):
         else:
             if symbol not in self.symbols_mat:
                 self.symbols_mat[symbol] = None
+                self.symbols_mat_type[symbol] = data_type
             # print(type(mat))
             if type(mat) is tuple:
                 if len(mat) == 2:
