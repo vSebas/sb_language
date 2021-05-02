@@ -1,5 +1,5 @@
 BEGIN
-SH <"mat_exp_test.txt">
+SH <"mat_exp_test.txt">;
 
 CRT INT arr(1,1,1);
 arr(0,0,0) = 1;
