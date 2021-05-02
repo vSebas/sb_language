@@ -12,7 +12,7 @@ program.symbols = {}
 program.symbols_mat = {}
 
 precedence = (
-    ('nonassoc', 'LT', 'GT'),  # Nonassociative operators
+    ('nonassoc', 'LT', 'GT','LTE', 'GTE'),  # Nonassociative operators
     ('left','AND','OR'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE'),
@@ -32,41 +32,47 @@ def p_routine(p):
 
 def p_body(p):
     '''
-    body  : body est SEMICOLON
+    body  : body st SEMICOLON
           | body cond
           | empty
     '''
 
 # STATEMENTS
-def p_est(p):
+def p_st(p):
     '''
-    est : CALL ID
+    st : CALL ID
         | JPTO ID
     '''
 
-def p_est_read_val(p):
+def p_st_read_val(p):
     '''
-    est : RD LT ID COMA val GT
+    st : RD LT ID COMA val GT
     '''
-    program.check_in_symbols(p[3],p[5])
+    program.update_symbol(p[3],p[5])
 
-def p_est_show_val(p):
+def p_st_show_val(p):
     '''
-    est : SH LT val GT
+    st : SH LT val GT
     '''
     print(p[3])
 
-def p_est_show_str(p):
+def p_st_show_str(p):
     '''
-    est : SH LT STRING GT
+    st : SH LT STRING GT
     '''
     print(p[3])
 
-def p_est_mat(p):
+def p_st_id_declare(p):
     '''
-    est : CRT data_type ID m assignment
+    st : CRT data_type ID
     '''
-    program.create_symbol_mat(p[2],p[3],p[4],p[5])
+    program.create_symbol(p[2],p[3])
+
+def p_st_mat(p):
+    '''
+    st : CRT data_type ID m
+    '''
+    program.create_symbol_mat(p[2],p[3],p[4])
 
 def p_m(p):
     '''
@@ -76,36 +82,48 @@ def p_m(p):
     '''
     p[0] = program.check_symbol_dim(p)
 
+def p_log_math_exp(p):
+    '''
+    st : log_exp
+       | math_exp
+    '''
+    program.clean_temporal_avail()
 
-def p_est_id_declare(p):
+def p_st_asmnt(p):
     '''
-    est : CRT data_type ID assignment
+    st : assignment
+       | mat_assignment
     '''
-    program.create_symbol(p[2],p[3],p[4])
+
+# def p_st_asmnt(p):
+#     '''
+#     assignment : EQUALS ID
+#                | EQUALS log_exp
+#                | EQUALS math_exp
+#                | empty
+#     '''
+#     if len(p) > 2:
+#         p[0] = p[2]
+#     else:
+#         p[0] = p[1]
 
 def p_assignment(p):
     '''
-    assignment : EQUALS ID
-               | EQUALS log_exp
-               | EQUALS math_exp
-               | empty
+    assignment : ID EQUALS ID
+               | ID EQUALS log_exp
+               | ID EQUALS math_exp
     '''
-    if len(p) > 2:
-        p[0] = p[2]
-    else:
-        p[0] = p[1]
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
 
-def p_est_id_assmt(p):
+def p_mat_assignment(p):
     '''
-    est : ID assignment
+    mat_assignment : ID m EQUALS ID
+                   | ID m EQUALS log_exp
+                   | ID m EQUALS math_exp
     '''
-    program.id_assignment(p[1],p[2])
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
 
-def p_est_id_array_assmt(p):
-    '''
-    est : ID m assignment
-    '''
-    p[0] = program.id_mat_assignment(p[1],p[2],p[3])
+    # p[0] = program.id_mat_assignment(p[1],p[2],p[3])
 
 # CONDITIONALS
 # def p_cond(p):
@@ -142,7 +160,7 @@ def p_cond_do(p):
 
 def p_cond_for(p):
     '''
-    cond : FOR LPAREN log_exp COMA ID assignment RPAREN COLON body END
+    cond : FOR LPAREN log_exp COMA assignment RPAREN COLON body END
     '''
 
 # # Logical expressions
@@ -150,44 +168,63 @@ def p_log_exp_is_eq(p):
     '''
     log_exp : log_exp IS_EQUAL log_exp
     '''
-    p[0] = p[1] == p[3]
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
+    # p[0] = p[1] == p[3]
 
 def p_log_exp_neq(p):
     '''
     log_exp : log_exp DIFFERENT log_exp
     '''
-    p[0] = p[1] != p[3]
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
+    # p[0] = p[1] != p[3]
 
 def p_log_gt(p):
     '''
     log_exp : log_exp GT log_exp
     '''
-    p[0] = p[1] > p[3]
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
+    # p[0] = p[1] > p[3]
 
 def p_log_lt(p):
     '''
     log_exp : log_exp LT log_exp
     '''
-    if p[1] is not None and p[2] is not None:
-        p[0] = p[1] < p[3]
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
+    # if p[1] is not None and p[2] is not None:
+        # p[0] = p[1] < p[3]
+
+def p_log_gte(p):
+    '''
+    log_exp : log_exp GTE log_exp
+    '''
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
+
+def p_log_lte(p):
+    '''
+    log_exp : log_exp LTE log_exp
+    '''
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
 
 def p_log_and(p):
     '''
     log_exp : log_exp AND log_exp
     '''
-    p[0] = p[1] and p[3]
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
+    # p[0] = p[1] and p[3]
 
 def p_log_or(p):
     '''
     log_exp : log_exp OR log_exp
     '''
-    p[0] = p[1] or p[3]
+    p[0] = program.generate_quadruple(p[1], p[2], p[3])
+    # p[0] = p[1] or p[3]
 
 def p_log_not(p):
     '''
     log_exp : NT log_exp
     '''
-    p[0] = not p[2]
+    p[0] = program.generate_quadruple(p[1], p[2])
+    # p[0] = not p[2]
 
 def p_log_par(p):
     '''
@@ -206,35 +243,41 @@ def p_math_exp_plus(p):
     '''
     math_exp : math_exp PLUS math_exp
     '''
-    p[0] = program.oper_manager(p[1],p[2],p[3])
+    p[0] = program.generate_quadruple(p[1],p[2],p[3])
+    #p[0] = program.oper_manager(p[1],p[2],p[3])
 
 def p_math_exp_minus(p):
     '''
     math_exp : math_exp MINUS math_exp
     '''
-    p[0] = program.oper_manager(p[1],p[2],p[3])
+    p[0] = program.generate_quadruple(p[1],p[2],p[3])
+    #p[0] = program.oper_manager(p[1],p[2],p[3])
 
 def p_math_exp_times(p):
     '''
     math_exp : math_exp TIMES math_exp
     '''
-    p[0] = program.oper_manager(p[1],p[2],p[3])
+    p[0] = program.generate_quadruple(p[1],p[2],p[3])
+    #p[0] = program.oper_manager(p[1],p[2],p[3])
 
 def p_math_exp_divide(p):
     '''
     math_exp : math_exp DIVIDE math_exp
     '''
-    p[0] = program.oper_manager(p[1],p[2],p[3])
+    p[0] = program.generate_quadruple(p[1],p[2],p[3])
+    #p[0] = program.oper_manager(p[1],p[2],p[3])
 
 def p_math_exp_power(p):
     '''
     math_exp : math_exp POWER math_exp
     '''
-    p[0] = program.oper_manager(p[1],p[2],p[3])
+    p[0] = program.generate_quadruple(p[1],p[2],p[3])
+    #p[0] = program.oper_manager(p[1],p[2],p[3])
 
 def p_math_exp_uminus(p):
     'math_exp : MINUS val %prec UMINUS'
-    p[0] = program.oper_manager(0,p[2],p[3])
+    p[0] = program.generate_quadruple(p[1],p[2])
+    # p[0] = program.oper_manager(0,p[2],p[3])
 
 def p_math_par(p):
     '''
@@ -263,8 +306,9 @@ def p_val(p):
         | FLOAT
         | INTEGER
     '''
-    p[0] = program.ret_value(p[1])
-
+    # p[0] = program.ret_value(p[1])
+    # p[0] = p[1]
+    p[0] = program.check_in_symbols(p[1])
 
 def p_val_mat(p):
     # For assignments
@@ -290,7 +334,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/lexer_expressions/matrix_mult_test.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/into_quadruples_translation/arith_logic_translation.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()

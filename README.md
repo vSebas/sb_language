@@ -11,7 +11,7 @@ Language created with PLY for the Languages and Translators course
 <!-- What things you need to install the software and how to install them -->
 
 ```
-<!-- Give examples -->
+Install ply
 ```
 
 ### Running
@@ -23,6 +23,10 @@ Say what the step will be -->
 ```
 <!-- Give the example -->
 ```
+
+### TODO:
+Quitar validación de tipo.
+Quitar inicialización de variables al mismo tiempo de la declaración.
 
 <!-- ## Running the tests
 

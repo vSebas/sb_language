@@ -1,0 +1,21 @@
+\\ Cuarta entrega: Traducción de expresiones aritméticas y lógicas
+\\ Pruebe las expresiones:   2) (a>b) and (b <c) or (d = e) and (e <=f)   pruebe declarando todas las variables y sin declarar algunas
+\\ 5-2-2021
+\\ Ahora ya no se puede inicializar variables cuando se declaran. En anteriores entregas estaba implementado eso.
+
+BEGIN
+
+CRT INT a;
+CRT INT b;
+\\CRT INT c;
+\\CRT INT d;
+\\CRT INT e;
+\\CRT INT f;
+CRT INT g;
+CRT INT h;
+
+a+b+c*(d+e*(e + g + h)+ b) + a*b*c;
+
+(a>b) & (b < c) # (d =? e) & (e <= f);
+
+FINISH
