@@ -1,5 +1,7 @@
 \\ Cuarta entrega: Traducción de expresiones aritméticas y lógicas
-\\ Pruebe las expresiones:   1) a+b+ c*(d+e*(e + g + h)+ b) + a*b*c   pruebe declarando todas las variables y sin declarar algunas
+\\ Pruebe las expresiones:   
+\\ 1) a+b+ c*(d+e*(e + g + h)+ b) + a*b*c
+\\ 2) (a>b) and (b <c) or (d = e) and (e <=f)   pruebe declarando todas las variables y sin declarar algunas
 \\ 5-2-2021
 \\ Ahora ya no se puede inicializar variables cuando se declaran. En anteriores entregas estaba implementado eso.
 
