@@ -5,7 +5,7 @@ import ply.lex as lex
 import sys
 
 tokens = [  'INTEGER', 'FLOAT', 'STRING', 'ID', #'FUNC_ID', "QUOT_MARKS",
-            'EQUALS', 'IS_EQUAL', 'DIFFERENT', 'GT', 'LT', 'AND', 'OR' ,'NT',
+            'EQUALS', 'IS_EQUAL', 'DIFFERENT', 'GT', 'LT', 'GTE', 'LTE', 'AND', 'OR' ,'NT',
             'PLUS', 'MINUS', 'DIVIDE', 'TIMES', 'POWER',
             'LPAREN', 'RPAREN', 'COLON', 'SEMICOLON', 'COMA'  ]
 
@@ -19,6 +19,8 @@ t_IS_EQUAL =  r'\=\?'
 t_DIFFERENT =  r'\=\/'
 t_GT =  r'\>'
 t_LT =  r'\<'
+t_GTE =  r'\>\='
+t_LTE =  r'\<\='
 t_AND =  r'\&'
 t_OR =  r'\#'
 t_NT =  r'\!'

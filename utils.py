@@ -1,3 +1,4 @@
+from exceptions import SBLanguageExceptions
 import math
 
 class Program:
@@ -6,10 +7,59 @@ class Program:
         # symbols_ = {variable,dict_val}
         # dict_val = {type, value}
         self.symbols={}
-        self.symbols_type={}
         self.symbols_mat={}
+        self.temporal_avail={}
+
+        # Eliminar siguientes:
+        self.symbols_type={}
         self.symbols_mat_type={}
-        # super().__init__()
+    
+    def generate_quadruple(self,quad1,quad2,quad3=None):
+        pos=len(self.temporal_avail)
+        self.temporal_avail["T{}".format(pos)]=None
+        if quad3 is not None:
+            if quad2 != "=":
+                print("{} {} {} {}".format(quad2,quad1,quad3,"T{}".format(pos)))
+
+                # if quad1 in self.temporal_avail.keys():
+                #     del self.temporal_avail[quad1]
+
+                # if quad3 in self.temporal_avail.keys():
+                #     del self.temporal_avail[quad3]
+                    
+                return "T{}".format(pos)
+            else:
+                print("{} {} {}".format(quad2,quad1,quad3))
+                # if quad3[0] != "T":
+                #     del self.temporal_avail[quad3]
+        else:
+            print("{} {} {} {}".format(quad2," ",quad2,"T{}".format(pos)))
+            # if quad1 in self.temporal_avail.keys():
+            #     del self.temporal_avail[quad1]
+
+            # if quad3 in self.temporal_avail.keys():
+            #     del self.temporal_avail[quad3]
+
+            return "T{}".format(pos)
+        
+        return None
+
+    def clean_temporal_avail(self):
+        self.temporal_avail.clear()
+
+    def check_in_symbols(self,val):
+        if type(val) != int and type(val) != float:
+            if val in self.symbols.keys():
+                # return self.symbols[val]
+                return val
+            elif val in self.symbols_mat.keys():
+                # return self.symbols_mat[val]
+                return val
+            else:
+                raise SBLanguageExceptions(f'Undefined variable "{val}"!')
+            return None
+        else:
+            return val
     
     def oper_manager(self,operand1,oper,operand2):
         if   oper == '+':
@@ -30,7 +80,7 @@ class Program:
             print(i,symbol,self.symbols_type[symbol])
             i+=1
 
-    def check_in_symbols(self,symbol,value):
+    def update_symbol(self,symbol,value):
         if symbol in self.symbols:
             self.symbols[symbol] = value
         elif symbol in self.symbols_mat:
