@@ -35,14 +35,34 @@ def p_program_finish(p):
     FIN : FINISH
     '''
     program.end_program()
+
+def p_routine_beg(p):
+    '''
+    routine  : routine BEGFUNC body ENDFUNC
+    '''
+
+def p_routine_begin(p):
+    '''
+    BEGFUNC  : FUNC ID COLON
+    '''
+    program.generate_procedure(p[2])
+    # p[0] = program.generate_quadruple(p[2], p[3])
+
+def p_routine_empty(p):
+    '''
+    routine  : empty
+    '''
+
+def p_routine_finish(p):
+    '''
+    ENDFUNC  : RET
+    '''
+    program.end_procedure(p[1])
+    # p[0] = program.generate_quadruple(p[2], p[3])
+    
     # program.check_intermediate_code()
     program.code_execution()
 
-def p_routine(p):
-    '''
-    routine  : routine FUNC ID COLON body RET
-             | empty
-    '''
 
 def p_body(p):
     '''
@@ -52,11 +72,18 @@ def p_body(p):
     '''
 
 # STATEMENTS
-def p_st(p):
+def p_st_call(p):
     '''
     st : CALL ID
-        | JPTO ID
     '''
+    p[0] = program.generate_quadruple(p[1], p[2])
+
+
+def p_st_jpto(p):
+    '''
+    st : JPTO ID
+    '''
+
 
 def p_st_read_val(p):
     '''

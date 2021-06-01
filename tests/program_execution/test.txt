@@ -24,10 +24,22 @@ h=8;
 
 \\a = a + b;
 
-a=a+b+c*(d+e*(e + g + h)+ b) + a*b*c;
+\\a=a+b+c*(d+e*(e + g + h)+ b) + a*b*c;
+\\El anterior da como 327 sin haber modificado 'a'
 
 \\SH<a>;
 
 \\a=(a>b) & (b < c) # (d =? e) & (e <= f);
+\\El anterior da true, modicando 'a' con la ecuacion anterior
+
+CALL PROC;
 
 FINISH
+
+FUNC PROC:
+
+a=a+b+c*(d+e*(e + g + h)+ b) + a*b*c;
+
+SH<a>;
+
+RET

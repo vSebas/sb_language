@@ -11,7 +11,11 @@ class Program:
         self.temporal_avail={}
         self.quadruples=[[None, None, None, None]]
         self.constants=[]
+
+        # Nombre del procedure y direcci[on de inicio]
+        self.procedures={}
         self.PC=0
+        self.PCs=[]
 
         # Eliminar siguientes:
         self.symbols_type={}
@@ -24,7 +28,14 @@ class Program:
 
     def end_program(self):
         self.quadruples.append(["ENDPROGRAM",None,None,None])
-        # self.quadruples[0][1] = 1       # Can go to the first position as PROCEDURES are located after the main program
+
+    def generate_procedure(self, quad1):
+        dir = len(self.quadruples)
+        self.quadruples.append(["PROCEDURE",dir,None,None])
+        self.procedures[quad1] = dir
+    
+    def end_procedure(self, quad1):
+        self.quadruples.append(["ENDPROCEDURE",None,None,None])
 
     def generate_quadruple(self,quad1,quad2,quad3=None,quad4=None):
         pos=len(self.temporal_avail)
@@ -49,19 +60,25 @@ class Program:
                         del self.temporal_avail[quad3]
                     '''
                     self.quadruples.append([quad2,quad1,None,quad3])
-            else: # expresiones estilo: not A, o -5
-                # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
-                '''
-                if quad1 in self.temporal_avail.keys():
-                    del self.temporal_avail[quad1]
+            else:
+                if quad1 == "CALL":
+                    # Se genera cuádruplo de un call a un procedure
+                    self.quadruples.append([quad1,quad2,None,None])
+                else:
+                    # expresiones estilo: not A, o -5
+                    # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
+                    '''
+                    if quad1 in self.temporal_avail.keys():
+                        del self.temporal_avail[quad1]
 
-                if quad3 in self.temporal_avail.keys():
-                    del self.temporal_avail[quad3]
-                '''
-                self.quadruples.append([quad1,None,quad2,f"T{pos}"])
-                return f"T{pos}"
+                    if quad3 in self.temporal_avail.keys():
+                        del self.temporal_avail[quad3]
+                    '''
+                    self.quadruples.append([quad1,None,quad2,f"T{pos}"])
+                    return f"T{pos}"
         else:
-            self.quadruples.append([quad1,quad3,None,None])
+            if quad3 is not None: # There is a RD or SH instruction
+                self.quadruples.append([quad1,quad3,None,None])
 
         return None
 
@@ -69,7 +86,7 @@ class Program:
         self.temporal_avail.clear()
 
     def check_intermediate_code(self):
-        print("Check Quadruples:")
+        print("Check:")
         for quadruple in self.quadruples:
             print(quadruple[0], quadruple[1], quadruple[2], quadruple[3])
 
@@ -86,16 +103,25 @@ class Program:
             opcode = quadruple[0]
             # print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
 
+            # print(quadruple[0])
+            # print(quadruple[1])
             if   quadruple[1] in self.symbols.keys():
                 quadruple1 =  self.symbols[quadruple[1]]
                 quad1_flag = "symbol"
+                # print("SYM")
             elif quadruple[1] in self.temporal_avail.keys():
                 quadruple1 =  self.temporal_avail[quadruple[1]]
                 quad1_flag = "temporal"
+                # print("TEMP")
+            elif quadruple[1] in self.procedures.keys():
+                quadruple1 =  self.procedures[quadruple[1]]
+                quad1_flag = "procedure"
+                # print("PROCC")
             elif quadruple[1] in self.constants:
                 index = self.constants.index(quadruple[1])
                 quadruple1 =  self.constants[index]
                 quad1_flag = "constant"
+                # print("CONS")
             
             if quadruple[2] is not None:
                 if   quadruple[2] in self.symbols.keys():
@@ -163,6 +189,14 @@ class Program:
                     quadruple1 = int(quadruple1)
             elif opcode == "SH":
                 print(f"<{quadruple1}>")
+            elif opcode == "CALL":
+                # print("CALL")
+                # print(quadruple1)
+                self.PCs.insert(0,self.PC)  # Debo guardar el PC actual
+                self.PC = quadruple1 # Dirección del procedure
+            elif opcode == "ENDPROCEDURE":
+                # print("ENDPROC")
+                self.PC = self.PCs.pop(0) # Devolver PC a donde estaba
             elif opcode == 'GOTO':
                 self.PC = quadruple[1]
                 jump = 1
@@ -171,6 +205,8 @@ class Program:
                 # self.check_symbol_values()
                 exit()
 
+            # print(self.PC)
+            
             if (not jump):
                 if quad3_flag == "symbol":
                     self.symbols[quadruple[3]] = quadruple3
