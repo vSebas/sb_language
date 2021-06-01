@@ -1,0 +1,33 @@
+BEGIN
+
+CRT INT a;
+CRT INT b;
+CRT INT c;
+CRT INT d;
+CRT INT e;
+CRT INT f;
+CRT INT g;
+CRT INT h;
+
+a=1;
+b=2;
+c=3;
+d=4;
+e=5;
+f=6;
+g=7;
+h=8;
+
+\\RD<a>;
+
+\\SH<a>;
+
+\\a = a + b;
+
+a=a+b+c*(d+e*(e + g + h)+ b) + a*b*c;
+
+\\SH<a>;
+
+\\a=(a>b) & (b < c) # (d =? e) & (e <= f);
+
+FINISH
