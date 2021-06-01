@@ -21,8 +21,22 @@ precedence = (
 
 def p_program(p):
     '''
-    program : BEGIN body FINISH routine
+    program : BEG body FIN routine
     '''
+
+def p_program_begin(p):
+    '''
+    BEG : BEGIN
+    '''
+    program.start_program()
+
+def p_program_finish(p):
+    '''
+    FIN : FINISH
+    '''
+    program.end_program()
+    program.check_intermediate_code()
+    program.code_execution()
 
 def p_routine(p):
     '''
@@ -82,30 +96,19 @@ def p_m(p):
     '''
     p[0] = program.check_symbol_dim(p)
 
-def p_log_math_exp(p):
-    '''
-    st : log_exp
-       | math_exp
-    '''
-    program.clean_temporal_avail()
+# def p_log_math_exp(p):
+#     '''
+#     st : log_exp
+#        | math_exp
+#     '''
+#     program.clean_temporal_avail()
 
 def p_st_asmnt(p):
     '''
     st : assignment
        | mat_assignment
     '''
-
-# def p_st_asmnt(p):
-#     '''
-#     assignment : EQUALS ID
-#                | EQUALS log_exp
-#                | EQUALS math_exp
-#                | empty
-#     '''
-#     if len(p) > 2:
-#         p[0] = p[2]
-#     else:
-#         p[0] = p[1]
+    # program.clean_temporal_avail()
 
 def p_assignment(p):
     '''
@@ -334,7 +337,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/into_quadruples_translation/arith_logic_translation_error.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/program_execution/test.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()
