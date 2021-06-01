@@ -1,0 +1,24 @@
+BEGIN
+
+CRT INT f;
+CRT INT x;
+CRT INT a;
+CRT INT b;
+
+f=10;
+x=1;
+a=10;
+b=4;
+
+WHILE(f>x):
+SH<f>;
+WHILE(b<a):
+SH<b>;
+b=b+1;
+END
+f=f-x;
+END
+
+SH<f>;
+
+FINISH

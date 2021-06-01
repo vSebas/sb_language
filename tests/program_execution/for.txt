@@ -1,0 +1,20 @@
+BEGIN
+
+CRT INT f;
+CRT INT x;
+CRT INT a;
+CRT INT b;
+
+f=10;
+x=1;
+a=2;
+b=5;
+
+FOR(f>x,f=f-1):
+    SH<f>;
+
+END
+
+SH<f>;
+
+FINISH

@@ -1,0 +1,13 @@
+BEGIN
+
+CRT INT f;
+CRT INT x;
+
+CALL alfa;
+
+FINISH
+
+FUNC alfa:
+
+
+RET

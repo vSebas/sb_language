@@ -21,8 +21,15 @@ precedence = (
 
 def p_program(p):
     '''
-    program : BEG body FIN routine
+    program : BEG body FIN routine EXEC
     '''
+
+def p_program_exec(p):
+    '''
+    EXEC : empty
+    '''
+    # program.check_intermediate_code()
+    program.code_execution()
 
 def p_program_begin(p):
     '''
@@ -60,9 +67,6 @@ def p_routine_finish(p):
     program.end_procedure(p[1])
     # p[0] = program.generate_quadruple(p[2], p[3])
     
-    # program.check_intermediate_code()
-    program.code_execution()
-
 
 def p_body(p):
     '''
@@ -128,10 +132,10 @@ def p_m(p):
 
 # def p_log_math_exp(p):
 #     '''
-#     st : log_exp
+#     exp : log_exp
 #        | math_exp
 #     '''
-#     program.clean_temporal_avail()
+#     # program.clean_temporal_avail()
 
 def p_st_asmnt(p):
     '''
@@ -169,22 +173,52 @@ def p_mat_assignment(p):
 #          | empty
 #     '''
 
+
 def p_cond_if(p):
     '''
-    cond : IF LPAREN log_exp RPAREN COLON body NOT body END
-         | IF LPAREN log_exp RPAREN COLON body END
+    cond : IFBEGIN body IFEND
     '''
-    print(p[3])
-    if p[3]:
-        p[0] = p[6]
-    else:
-        if len(p) >8:
-            p[0] = p[8]
+
+def p_cond_if_begin(p):
+    '''
+    IFBEGIN : IF LPAREN log_exp RPAREN COLON
+    '''
+    program.generate_if_then(p[3])
+
+def p_cond_if_else(p):
+    '''
+    IFEND : ELSE body IFFINISH
+    '''
+
+def p_cond_else_not(p):
+    '''
+    ELSE : NOT
+    '''
+    program.generate_if_else(p[1])
+
+def p_cond_if_end(p):
+    '''
+    IFFINISH : END
+    '''
+    program.generate_if_end()
 
 def p_cond_while(p):
     '''
-    cond : WHILE LPAREN log_exp RPAREN COLON body END
+    cond : WHILEBEGIN body WHILEEND
     '''
+    
+
+def p_cond_while_begin(p):
+    '''
+    WHILEBEGIN : WHILE LPAREN log_exp RPAREN COLON
+    '''
+    program.generate_while_begin(p[3])
+
+def p_cond_while_end(p):
+    '''
+    WHILEEND : END
+    '''
+    program.generate_while_end()
 
 def p_cond_do(p):
     '''
@@ -193,8 +227,31 @@ def p_cond_do(p):
 
 def p_cond_for(p):
     '''
-    cond : FOR LPAREN log_exp COMA assignment RPAREN COLON body END
+    cond : FOR LPAREN EVAL COMA MODIFY RPAREN COLON body FOREND
     '''
+
+# def p_cond_for_init(p):
+#     '''
+#     FORINIT : 
+#     '''
+
+def p_cond_for_evaluate(p):
+    '''
+    EVAL : log_exp
+    '''
+    program.generate_for_eval(p[1])
+
+def p_cond_for_mod(p):
+    '''
+    MODIFY : assignment
+    '''
+    program.generate_for_mod()
+
+def p_cond_for_end(p):
+    '''
+    FOREND : END
+    '''
+    program.generate_for_end()
 
 # # Logical expressions
 def p_log_exp_is_eq(p):
@@ -367,7 +424,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/program_execution/test.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/program_execution/for.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()

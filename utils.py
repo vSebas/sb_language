@@ -17,6 +17,8 @@ class Program:
         self.PC=0
         self.PCs=[]
 
+        self.pila_saltos_ciclos=[]
+
         # Eliminar siguientes:
         self.symbols_type={}
         self.symbols_mat_type={}
@@ -36,6 +38,61 @@ class Program:
     
     def end_procedure(self, quad1):
         self.quadruples.append(["ENDPROCEDURE",None,None,None])
+
+    def generate_if_then(self, quad1):
+        # GOTOf Var ???
+        self.quadruples.append(["GOTOf",quad1,None,None])
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        # print(self.quadruples)
+        # print("Dirección GOTOf:",self.pila_saltos_ciclos)
+        
+    def generate_if_else(self, quad1):
+        # GOTO ???
+        dir = self.pila_saltos_ciclos.pop(0)
+        self.quadruples.append(["GOTO",None,None,None])
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.quadruples[dir][2] = len(self.quadruples)
+        # print(self.quadruples)
+        # print("Dirección GOTO:",self.pila_saltos_ciclos)
+        # print("Rellenar GOTOf:",self.quadruples[dir][1])
+
+    def generate_if_end(self):
+        dir = self.pila_saltos_ciclos.pop(0)
+        self.quadruples[dir][1] = len(self.quadruples)
+        # print(self.quadruples)
+        # print("Rellenar GOTO:",self.quadruples[dir][1])
+
+    def generate_while_begin(self,quad1):
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.quadruples.append(["GOTOf",quad1,None,None])
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+
+    def generate_while_end(self):
+        dir = self.pila_saltos_ciclos.pop(0)
+        ret = self.pila_saltos_ciclos.pop(0)
+        self.quadruples.append(["GOTO",ret,None,None])
+        self.quadruples[dir][2] = len(self.quadruples)
+
+    def generate_for_eval(self, quad1):
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.quadruples.append(["GOTOf",quad1,None,None])
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+
+    def generate_for_mod(self):
+        self.quadruples.append(["GOTO",None,None,None])
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        dir = self.pila_saltos_ciclos.pop(2)
+        ret = self.pila_saltos_ciclos.pop(0)
+        self.quadruples.append(["GOTO",dir,None,None])
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.quadruples[ret][1] = len(self.quadruples)
+
+    def generate_for_end(self):
+        dir = self.pila_saltos_ciclos.pop(0)
+        ret = self.pila_saltos_ciclos.pop(0)
+        self.quadruples.append(["GOTO",dir,None,None])
+        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.quadruples[ret][2] = len(self.quadruples)
 
     def generate_quadruple(self,quad1,quad2,quad3=None,quad4=None):
         pos=len(self.temporal_avail)
@@ -64,6 +121,8 @@ class Program:
                 if quad1 == "CALL":
                     # Se genera cuádruplo de un call a un procedure
                     self.quadruples.append([quad1,quad2,None,None])
+                # elif quad1 == "IF":
+                #     self.quadruples.append([quad1,quad2,None,None])
                 else:
                     # expresiones estilo: not A, o -5
                     # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
@@ -200,6 +259,12 @@ class Program:
             elif opcode == 'GOTO':
                 self.PC = quadruple[1]
                 jump = 1
+            elif opcode == 'GOTOf':
+                # print(quadruple1)
+                # print(quadruple2)
+                if not quadruple1:
+                    self.PC = quadruple[2]
+                    jump = 1
             elif opcode == 'ENDPROGRAM':
                 print("Program finished")
                 # self.check_symbol_values()

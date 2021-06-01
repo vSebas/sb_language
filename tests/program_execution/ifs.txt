@@ -1,0 +1,30 @@
+BEGIN
+
+CRT INT f;
+CRT INT x;
+CRT INT a;
+CRT INT b;
+
+f=2;
+x=1;
+a=4;
+b=4;
+
+IF(f>x):
+    f=x;
+    SH<f>;
+    IF(a<b):
+        f=a;
+        SH<f>;
+    NOT
+        f=b+1;
+    END
+    NOT
+        SH<f>;
+        f=f+x;
+        SH<f>;
+END
+
+SH<f>;
+
+FINISH
