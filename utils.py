@@ -157,6 +157,10 @@ class Program:
                 # print(quadruple2)
             elif opcode == "RD":
                 quadruple1 = input("Input:")
+                if "." in quadruple1:
+                    quadruple1 = float(quadruple1)
+                else:
+                    quadruple1 = int(quadruple1)
             elif opcode == "SH":
                 print(f"<{quadruple1}>")
             elif opcode == 'GOTO':
