@@ -26,12 +26,31 @@ class Program:
         self.quadruples.append(["ENDPROGRAM",None,None,None])
         # self.quadruples[0][1] = 1       # Can go to the first position as PROCEDURES are located after the main program
 
-    def generate_quadruple(self,quad1,quad2,quad3=None):
+    def generate_quadruple(self,quad1,quad2,quad3=None,quad4=None):
         pos=len(self.temporal_avail)
         self.temporal_avail[f"T{pos}"]=None
-        if quad3 is not None:
-            if quad2 != "=":
-                # print("{} {} {} {}".format(quad2,quad1,quad3,f"T{pos}"))
+        if quad4 is None: # There is a RD or SH instruction
+            if quad3 is not None:
+                if quad2 != "=":
+                    # print("{} {} {} {}".format(quad2,quad1,quad3,f"T{pos}"))
+                    '''
+                    if quad1 in self.temporal_avail.keys():
+                        del self.temporal_avail[quad1]
+
+                    if quad3 in self.temporal_avail.keys():
+                        del self.temporal_avail[quad3]
+                    '''
+                    self.quadruples.append([quad2,quad1,quad3,f"T{pos}"])
+                    return f"T{pos}"
+                else:
+                    # print("{} {} {}".format(quad2,quad1,quad3))
+                    '''
+                    if quad3[0] != "T":
+                        del self.temporal_avail[quad3]
+                    '''
+                    self.quadruples.append([quad2,quad1,None,quad3])
+            else: # expresiones estilo: not A, o -5
+                # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
                 '''
                 if quad1 in self.temporal_avail.keys():
                     del self.temporal_avail[quad1]
@@ -39,26 +58,11 @@ class Program:
                 if quad3 in self.temporal_avail.keys():
                     del self.temporal_avail[quad3]
                 '''
-                self.quadruples.append([quad2,quad1,quad3,f"T{pos}"])
+                self.quadruples.append([quad1,None,quad2,f"T{pos}"])
                 return f"T{pos}"
-            else:
-                # print("{} {} {}".format(quad2,quad1,quad3))
-                '''
-                if quad3[0] != "T":
-                    del self.temporal_avail[quad3]
-                '''
-                self.quadruples.append([quad2,quad1,None,quad3])
-        else: # expresiones estilo: not A, o -5
-            # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
-            '''
-            if quad1 in self.temporal_avail.keys():
-                del self.temporal_avail[quad1]
+        else:
+            self.quadruples.append([quad1,quad3,None,None])
 
-            if quad3 in self.temporal_avail.keys():
-                del self.temporal_avail[quad3]
-            '''
-            self.quadruples.append([quad1,None,quad2,f"T{pos}"])
-            return f"T{pos}"
         return None
 
     def clean_temporal_avail(self):
@@ -80,7 +84,7 @@ class Program:
             jump = 0
             quadruple = self.quadruples[self.PC]
             opcode = quadruple[0]
-            print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
+            # print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
 
             if   quadruple[1] in self.symbols.keys():
                 quadruple1 =  self.symbols[quadruple[1]]
@@ -151,13 +155,16 @@ class Program:
             elif opcode == '=':  # ASSIGN
                 quadruple1 = quadruple3
                 # print(quadruple2)
-
+            elif opcode == "RD":
+                quadruple1 = input("Input:")
+            elif opcode == "SH":
+                print(f"<{quadruple1}>")
             elif opcode == 'GOTO':
                 self.PC = quadruple[1]
                 jump = 1
             elif opcode == 'ENDPROGRAM':
                 print("Program finished")
-                self.check_symbol_values()
+                # self.check_symbol_values()
                 exit()
 
             if (not jump):

@@ -35,7 +35,7 @@ def p_program_finish(p):
     FIN : FINISH
     '''
     program.end_program()
-    program.check_intermediate_code()
+    # program.check_intermediate_code()
     program.code_execution()
 
 def p_routine(p):
@@ -60,21 +60,24 @@ def p_st(p):
 
 def p_st_read_val(p):
     '''
-    st : RD LT ID COMA val GT
+    st : RD LT ID GT
     '''
-    program.update_symbol(p[3],p[5])
+    # program.update_symbol(p[3],p[5])
+    p[0] = program.generate_quadruple(p[1], p[2], p[3], p[4])
 
 def p_st_show_val(p):
     '''
-    st : SH LT val GT
+    st : SH LT ID GT
     '''
-    print(p[3])
+    p[0] = program.generate_quadruple(p[1], p[2], p[3], p[4])
+    # print(p[3])
 
-def p_st_show_str(p):
-    '''
-    st : SH LT STRING GT
-    '''
-    print(p[3])
+# def p_st_show_str(p):
+#     '''
+#     st : SH LT STRING GT
+#     '''
+#     p[0] = program.generate_quadruple(p[1], p[2], p[3], p[4])
+#     # print(p[3])
 
 def p_st_id_declare(p):
     '''
