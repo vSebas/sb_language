@@ -3,21 +3,31 @@ import math
 
 class Program:
     def __init__(self):
-        # Layout : 
-        # symbols_ = {variable,dict_val}
-        # dict_val = {type, value}
-        self.symbols={}
-        self.symbols_mat={}
-        self.temporal_avail={}
-        self.quadruples=[[None, None, None, None]]
+        # Constants found
         self.constants=[]
 
-        # Nombre del procedure y direcci[on de inicio]
+        # Symbols found
+        self.symbols={}
+
+        # Symbols as matrices
+        self.symbols_mat={}
+
+        self.temporal_avail={}
+
+        # Generated quadruples in 'compilation'
+        self.quadruples=[[None, None, None, None]]
+
+        # Procedures
         self.procedures={}
+
+        # Program counter
         self.PC=0
+
+        # Array to save interesting directions in PC
         self.PCs=[]
 
-        self.pila_saltos_ciclos=[]
+        # Array to save jumps made in loops
+        self.loops_jp_to=[]
 
         # Eliminar siguientes:
         self.symbols_type={}
@@ -25,7 +35,7 @@ class Program:
 
     def start_program(self):
         self.PC=0
-        self.quadruples[0][0] = "GOTO"
+        self.quadruples[0][0] = "GOTO"  # First quadruple
         self.quadruples[0][1] = 1       # Can go to the first position as PROCEDURES are located after the main program
 
     def end_program(self):
@@ -40,58 +50,56 @@ class Program:
         self.quadruples.append(["ENDPROCEDURE",None,None,None])
 
     def generate_if_then(self, quad1):
-        # GOTOf Var ???
         self.quadruples.append(["GOTOf",quad1,None,None])
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
         # print(self.quadruples)
-        # print("Dirección GOTOf:",self.pila_saltos_ciclos)
+        # print("Dirección GOTOf:",self.loops_jp_to)
         
     def generate_if_else(self, quad1):
-        # GOTO ???
-        dir = self.pila_saltos_ciclos.pop(0)
+        dir = self.loops_jp_to.pop(0)
         self.quadruples.append(["GOTO",None,None,None])
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
         self.quadruples[dir][2] = len(self.quadruples)
         # print(self.quadruples)
-        # print("Dirección GOTO:",self.pila_saltos_ciclos)
+        # print("Dirección GOTO:",self.loops_jp_to)
         # print("Rellenar GOTOf:",self.quadruples[dir][1])
 
     def generate_if_end(self):
-        dir = self.pila_saltos_ciclos.pop(0)
+        dir = self.loops_jp_to.pop(0)
         self.quadruples[dir][1] = len(self.quadruples)
         # print(self.quadruples)
         # print("Rellenar GOTO:",self.quadruples[dir][1])
 
     def generate_while_begin(self,quad1):
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
         self.quadruples.append(["GOTOf",quad1,None,None])
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
 
     def generate_while_end(self):
-        dir = self.pila_saltos_ciclos.pop(0)
-        ret = self.pila_saltos_ciclos.pop(0)
+        dir = self.loops_jp_to.pop(0)
+        ret = self.loops_jp_to.pop(0)
         self.quadruples.append(["GOTO",ret,None,None])
         self.quadruples[dir][2] = len(self.quadruples)
 
     def generate_for_eval(self, quad1):
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
         self.quadruples.append(["GOTOf",quad1,None,None])
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
 
     def generate_for_mod(self):
         self.quadruples.append(["GOTO",None,None,None])
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
-        dir = self.pila_saltos_ciclos.pop(2)
-        ret = self.pila_saltos_ciclos.pop(0)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
+        dir = self.loops_jp_to.pop(2)
+        ret = self.loops_jp_to.pop(0)
         self.quadruples.append(["GOTO",dir,None,None])
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
         self.quadruples[ret][1] = len(self.quadruples)
 
     def generate_for_end(self):
-        dir = self.pila_saltos_ciclos.pop(0)
-        ret = self.pila_saltos_ciclos.pop(0)
+        dir = self.loops_jp_to.pop(0)
+        ret = self.loops_jp_to.pop(0)
         self.quadruples.append(["GOTO",dir,None,None])
-        self.pila_saltos_ciclos.insert(0,len(self.quadruples)-1)
+        self.loops_jp_to.insert(0,len(self.quadruples)-1)
         self.quadruples[ret][2] = len(self.quadruples)
 
     def generate_quadruple(self,quad1,quad2,quad3=None,quad4=None):
@@ -160,28 +168,32 @@ class Program:
             jump = 0
             quadruple = self.quadruples[self.PC]
             opcode = quadruple[0]
-            # print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
+            print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
 
             # print(quadruple[0])
             # print(quadruple[1])
             if   quadruple[1] in self.symbols.keys():
                 quadruple1 =  self.symbols[quadruple[1]]
                 quad1_flag = "symbol"
-                # print("SYM")
+                print("SYM")
             elif quadruple[1] in self.temporal_avail.keys():
                 quadruple1 =  self.temporal_avail[quadruple[1]]
                 quad1_flag = "temporal"
-                # print("TEMP")
+                print("TEMP")
             elif quadruple[1] in self.procedures.keys():
                 quadruple1 =  self.procedures[quadruple[1]]
                 quad1_flag = "procedure"
-                # print("PROCC")
+                print("PROCC")
             elif quadruple[1] in self.constants:
                 index = self.constants.index(quadruple[1])
                 quadruple1 =  self.constants[index]
                 quad1_flag = "constant"
-                # print("CONS")
+                print("CONS")
+            print(quadruple1)
             
+            # else:
+            #     quad1_flag = ""
+
             if quadruple[2] is not None:
                 if   quadruple[2] in self.symbols.keys():
                     quadruple2 =  self.symbols[quadruple[2]]
@@ -193,6 +205,10 @@ class Program:
                     index = self.constants.index(quadruple[2])
                     quadruple2 =  self.constants[index]
                     quad2_flag = "constant"
+                print(quadruple2)
+                
+                # else:
+                #     quad2_flag = ""
 
             if quadruple[3] is not None:
                 if   quadruple[3] in self.symbols.keys():
@@ -205,6 +221,10 @@ class Program:
                     index = self.constants.index(quadruple[3])
                     quadruple3 =  self.constants[index]
                     quad3_flag = "constant"
+                print(quadruple3)
+                # else:
+                #     quad3_flag = ""
+
 
             if opcode == '+':
                 quadruple3 = quadruple1 + quadruple2
@@ -219,6 +239,7 @@ class Program:
                 quadruple3 = quadruple1 / quadruple2
             elif opcode == '^':
                 quadruple3 = math.pow(quadruple1,quadruple2)
+                print(quadruple3)
             elif opcode == '&': # AND
                 quadruple3 = quadruple1 and quadruple2
             elif opcode == '#': # OR
@@ -246,6 +267,7 @@ class Program:
                     quadruple1 = float(quadruple1)
                 else:
                     quadruple1 = int(quadruple1)
+                self.constants.append(quadruple1)
             elif opcode == "SH":
                 print(f"<{quadruple1}>")
             elif opcode == "CALL":
@@ -275,8 +297,8 @@ class Program:
             if (not jump):
                 if quad3_flag == "symbol":
                     self.symbols[quadruple[3]] = quadruple3
-                else:
-                    self.temporal_avail[quadruple[3]] = quadruple3
+                # else:
+                #     self.temporal_avail[quadruple[3]] = quadruple3
 
                 if quad2_flag == "symbol":
                     self.symbols[quadruple[2]] = quadruple2
