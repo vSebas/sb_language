@@ -1,0 +1,31 @@
+BEGIN
+CRT INT millar;
+CRT INT centena;
+CRT INT decena;
+CRT INT A;
+
+millar = 0;
+centena = 0;
+decena = 0;
+
+RD<A>;
+
+WHILE(A>9):
+    WHILE(A>999):
+        A=A-1000;
+        millar=millar+1;
+    END
+    WHILE(A>99):
+        A=A-100;
+        centena=centena+1;
+    END
+    A=A-10;
+    decena=decena+1;
+END
+
+SH<millar>;
+SH<centena>;
+SH<decena>;
+SH<A>;
+
+FINISH

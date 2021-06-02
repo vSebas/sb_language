@@ -3,11 +3,34 @@ BEGIN
 CRT INT f;
 CRT INT x;
 
-CALL alfa;
+RD<x>;
+
+CALL NONRECURSIVE;
+\\CALL RECURSIVE;
 
 FINISH
 
+FUNC NONRECURSIVE:
+    f=1;
+    FOR(x>1,x=x-1):
+        f=f*x;
+        \\SH<x>;
+    END
+    SH<f>;
+RET
+
+FUNC RECURSIVE:
+    f=1;
+    CALL alfa;
+    SH<f>;
+RET
+
 FUNC alfa:
-
-
+    \\SH<x>;
+    IF(x>1):
+        f=f*x;
+        x=x-1;
+        CALL alfa;
+    NOT
+    END
 RET

@@ -102,52 +102,69 @@ class Program:
         self.loops_jp_to.insert(0,len(self.quadruples)-1)
         self.quadruples[ret][2] = len(self.quadruples)
 
-    def generate_quadruple(self,quad1,quad2,quad3=None,quad4=None):
+    def generate_quadruple(self,type,quad1,quad2,quad3=None,quad4=None):
         pos=len(self.temporal_avail)
         self.temporal_avail[f"T{pos}"]=None
-        if quad4 is None: # There is a RD or SH instruction
+
+        if (type == "MATH_EXP" or type == "LOG_EXP"):
             if quad3 is not None:
-                if quad2 != "=":
-                    # print("{} {} {} {}".format(quad2,quad1,quad3,f"T{pos}"))
-                    '''
-                    if quad1 in self.temporal_avail.keys():
-                        del self.temporal_avail[quad1]
-
-                    if quad3 in self.temporal_avail.keys():
-                        del self.temporal_avail[quad3]
-                    '''
-                    self.quadruples.append([quad2,quad1,quad3,f"T{pos}"])
-                    return f"T{pos}"
-                else:
-                    # print("{} {} {}".format(quad2,quad1,quad3))
-                    '''
-                    if quad3[0] != "T":
-                        del self.temporal_avail[quad3]
-                    '''
-                    self.quadruples.append([quad2,quad1,None,quad3])
+                self.quadruples.append([quad2,quad1,quad3,f"T{pos}"])
             else:
-                if quad1 == "CALL":
-                    # Se genera cuádruplo de un call a un procedure
-                    self.quadruples.append([quad1,quad2,None,None])
-                # elif quad1 == "IF":
-                #     self.quadruples.append([quad1,quad2,None,None])
-                else:
-                    # expresiones estilo: not A, o -5
-                    # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
-                    '''
-                    if quad1 in self.temporal_avail.keys():
-                        del self.temporal_avail[quad1]
-
-                    if quad3 in self.temporal_avail.keys():
-                        del self.temporal_avail[quad3]
-                    '''
-                    self.quadruples.append([quad1,None,quad2,f"T{pos}"])
-                    return f"T{pos}"
-        else:
-            if quad3 is not None: # There is a RD or SH instruction
-                self.quadruples.append([quad1,quad3,None,None])
-
+                self.quadruples.append([quad1,None,quad2,f"T{pos}"])
+            return f"T{pos}"
+        elif (type == "CALL"):
+            self.quadruples.append([quad1,quad2,None,None])
+        elif (type == "RD" or type == "SH"):
+            self.quadruples.append([quad1,quad3,None,None])
+        elif (type == "SIMPLE_ASSIGNMENT"):
+            self.quadruples.append([quad2,quad1,None,quad3])
+        # elif (type == "DIM_ASSIGNMENT"):
+            
         return None
+        
+        # if quad4 is None: # There is a RD or SH instruction
+        #     if quad3 is not None:
+        #         if quad2 != "=":
+        #             # print("{} {} {} {}".format(quad2,quad1,quad3,f"T{pos}"))
+        #             '''
+        #             if quad1 in self.temporal_avail.keys():
+        #                 del self.temporal_avail[quad1]
+
+        #             if quad3 in self.temporal_avail.keys():
+        #                 del self.temporal_avail[quad3]
+        #             '''
+        #             self.quadruples.append([quad2,quad1,quad3,f"T{pos}"])
+        #             return f"T{pos}"
+        #         else:
+        #             # print("{} {} {}".format(quad2,quad1,quad3))
+        #             '''
+        #             if quad3[0] != "T":
+        #                 del self.temporal_avail[quad3]
+        #             '''
+        #             self.quadruples.append([quad2,quad1,None,quad3])
+        #     else:
+        #         if quad1 == "CALL":
+        #             # Se genera cuádruplo de un call a un procedure
+        #             self.quadruples.append([quad1,quad2,None,None])
+        #         # elif quad1 == "IF":
+        #         #     self.quadruples.append([quad1,quad2,None,None])
+        #         else:
+        #             # expresiones estilo: not A, o -5
+        #             # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
+        #             '''
+        #             if quad1 in self.temporal_avail.keys():
+        #                 del self.temporal_avail[quad1]
+
+        #             if quad3 in self.temporal_avail.keys():
+        #                 del self.temporal_avail[quad3]
+        #             '''
+        #             self.quadruples.append([quad1,None,quad2,f"T{pos}"])
+        #             return f"T{pos}"
+        # else:
+        #     if quad3 is not None: # There is a RD or SH instruction
+        #         self.quadruples.append([quad1,quad3,None,None])
+
+        # return None
 
     def clean_temporal_avail(self):
         self.temporal_avail.clear()
@@ -163,33 +180,29 @@ class Program:
         quad3_flag = ""
         jump = 0
         index = 0
+        opcode = ""
 
-        while(True):
+        while(opcode != "ENDPROGRAM"):
             jump = 0
             quadruple = self.quadruples[self.PC]
             opcode = quadruple[0]
-            print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
+            # print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
 
             # print(quadruple[0])
             # print(quadruple[1])
-            if   quadruple[1] in self.symbols.keys():
+            if quadruple[1] in self.symbols.keys():
                 quadruple1 =  self.symbols[quadruple[1]]
                 quad1_flag = "symbol"
-                print("SYM")
             elif quadruple[1] in self.temporal_avail.keys():
                 quadruple1 =  self.temporal_avail[quadruple[1]]
                 quad1_flag = "temporal"
-                print("TEMP")
             elif quadruple[1] in self.procedures.keys():
                 quadruple1 =  self.procedures[quadruple[1]]
                 quad1_flag = "procedure"
-                print("PROCC")
             elif quadruple[1] in self.constants:
                 index = self.constants.index(quadruple[1])
                 quadruple1 =  self.constants[index]
                 quad1_flag = "constant"
-                print("CONS")
-            print(quadruple1)
             
             # else:
             #     quad1_flag = ""
@@ -205,7 +218,6 @@ class Program:
                     index = self.constants.index(quadruple[2])
                     quadruple2 =  self.constants[index]
                     quad2_flag = "constant"
-                print(quadruple2)
                 
                 # else:
                 #     quad2_flag = ""
@@ -221,7 +233,6 @@ class Program:
                     index = self.constants.index(quadruple[3])
                     quadruple3 =  self.constants[index]
                     quad3_flag = "constant"
-                print(quadruple3)
                 # else:
                 #     quad3_flag = ""
 
@@ -239,7 +250,6 @@ class Program:
                 quadruple3 = quadruple1 / quadruple2
             elif opcode == '^':
                 quadruple3 = math.pow(quadruple1,quadruple2)
-                print(quadruple3)
             elif opcode == '&': # AND
                 quadruple3 = quadruple1 and quadruple2
             elif opcode == '#': # OR
@@ -294,9 +304,11 @@ class Program:
 
             # print(self.PC)
             
+            # print(quad1_flag,quad2_flag,quad3_flag)
+
             if (not jump):
-                if quad3_flag == "symbol":
-                    self.symbols[quadruple[3]] = quadruple3
+                if quad3_flag == "temporal":
+                    self.temporal_avail[quadruple[3]] = quadruple3
                 # else:
                 #     self.temporal_avail[quadruple[3]] = quadruple3
 

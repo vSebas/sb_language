@@ -1,0 +1,24 @@
+BEGIN
+
+CRT INT a;
+CRT INT b;
+CRT INT c;
+
+RD<a>;
+RD<b>;
+
+c = ((a^2)+(b^2)^0.5);
+SH<c>;
+
+RD<c>;
+    IF(c=?1):
+    RD<a>;
+    RD<b>;
+    c = ((a^2)+(b^2)^0.5);
+    SH<c>;
+NOT
+
+END
+
+
+FINISH
