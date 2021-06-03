@@ -8,8 +8,8 @@ debug=True
 tokens = sb_lexer.tokens
 
 program = Program()
-program.symbols = {}
-program.symbols_mat = {}
+# program.symbols = {}
+# program.symbols_mat = {}
 
 precedence = (
     ('nonassoc', 'LT', 'GT','LTE', 'GTE'),  # Nonassociative operators
@@ -156,7 +156,7 @@ def p_mat_assignment(p):
                    | ID m EQUALS log_exp
                    | ID m EQUALS math_exp
     '''
-    p[0] = program.generate_quadruple("DIM_ASSIGNMENT",p[1], p[2], p[3])
+    p[0] = program.generate_quadruple("DIM_ASSIGNMENT",p[1], p[2], p[3], p[4])
 
     # p[0] = program.id_mat_assignment(p[1],p[2],p[3])
 
@@ -170,7 +170,6 @@ def p_mat_assignment(p):
 #     ent  : NOT body
 #          | empty
 #     '''
-
 
 def p_cond_if(p):
     '''
@@ -204,7 +203,6 @@ def p_cond_while(p):
     '''
     cond : WHILEBEGIN body WHILEEND
     '''
-    
 
 def p_cond_while_begin(p):
     '''
@@ -422,7 +420,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/final_tests/factorial.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/n_dim_variables/matrix.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()
