@@ -28,8 +28,8 @@ def p_program_exec(p):
     '''
     EXEC : empty
     '''
-    program.check_intermediate_code()
-    # program.code_execution()
+    # program.check_intermediate_code()
+    program.code_execution()
 
 def p_program_begin(p):
     '''
@@ -425,7 +425,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/program_execution/for.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/loops_procedures/for.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()

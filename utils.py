@@ -77,23 +77,28 @@ class Program:
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
         prog.quadruples.append(["GOTO",None,None,None,None])        # Go to the statement (1)
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
+        # print(1,prog.loops_jp_to)
 
     def generate_for_mod(prog):
         prog.quadruples.append(["GOTO",None,None,None,None])        # Go to the beginning of FOR (3)
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
-        prog.loops_jp_to.insert(0,len(prog.quadruples))             # So we can get right to the next instruction
+        # print(2,prog.loops_jp_to)
 
     def generate_for_end(prog):
-        dir0 = prog.loops_jp_to.pop(0)
         dir1 = prog.loops_jp_to.pop(0)
         dir2 = prog.loops_jp_to.pop(0)
         dir3 = prog.loops_jp_to.pop(0)
         dir4 = prog.loops_jp_to.pop(0)
-        prog.quadruples.append(["GOTO",None,dir2+1,None,None])        # Go to previous statement and MODIFY index value (2)
-        prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
+        prog.quadruples.append(["GOTO",None,dir2+1,None,None])      # Go to previous statement and MODIFY index value (2)
+        # prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
+        # print("To beg of for:",prog.loops_jp_to[0], " a :", dir2+1)
         prog.quadruples[dir1][2] = dir4                             # Back to the top
-        prog.quadruples[dir2][2] = dir0                             # To jump directly to the statements
-        prog.quadruples[dir3][2] = len(prog.quadruples)             # Fill GOTOf
+        # print("To statements:",dir2, " a :", dir0)
+        prog.quadruples[dir2][2] = dir1+1                             # To jump directly to the statements
+        # print("Fill GOTOf:", dir3, " a :", len(prog.quadruples))
+        prog.quadruples[dir3][2] = len(prog.quadruples)            # Fill GOTOf
+        # print(3,dir1,dir2,dir3,dir4)
+        # print(3,prog.loops_jp_to)
 
     def generate_quadruple(prog,type,quad1,quad2,quad3=None,quad4=None,quad5=None):
         pos=len(prog.temporal_avail)
@@ -115,50 +120,6 @@ class Program:
             prog.quadruples.append([quad3,quad1,quad2,quad4,quad5])
 
         return None
-
-        # if quad4 is None: # There is a RD or SH instruction
-        #     if quad3 is not None:
-        #         if quad2 != "=":
-        #             # print("{} {} {} {}".format(quad2,quad1,quad3,f"T{pos}"))
-        #             '''
-        #             if quad1 in prog.temporal_avail.keys():
-        #                 del prog.temporal_avail[quad1]
-
-        #             if quad3 in prog.temporal_avail.keys():
-        #                 del prog.temporal_avail[quad3]
-        #             '''
-        #             prog.quadruples.append([quad2,quad1,quad3,f"T{pos}"])
-        #             return f"T{pos}"
-        #         else:
-        #             # print("{} {} {}".format(quad2,quad1,quad3))
-        #             '''
-        #             if quad3[0] != "T":
-        #                 del prog.temporal_avail[quad3]
-        #             '''
-        #             prog.quadruples.append([quad2,quad1,None,quad3])
-        #     else:
-        #         if quad1 == "CALL":
-        #             # Se genera cuádruplo de un call a un procedure
-        #             prog.quadruples.append([quad1,quad2,None,None])
-        #         # elif quad1 == "IF":
-        #         #     prog.quadruples.append([quad1,quad2,None,None])
-        #         else:
-        #             # expresiones estilo: not A, o -5
-        #             # print("{} {} {} {}".format(quad2," ",quad2,f"T{pos}"))
-        #             '''
-        #             if quad1 in prog.temporal_avail.keys():
-        #                 del prog.temporal_avail[quad1]
-
-        #             if quad3 in prog.temporal_avail.keys():
-        #                 del prog.temporal_avail[quad3]
-        #             '''
-        #             prog.quadruples.append([quad1,None,quad2,f"T{pos}"])
-        #             return f"T{pos}"
-        # else:
-        #     if quad3 is not None: # There is a RD or SH instruction
-        #         prog.quadruples.append([quad1,quad3,None,None])
-
-        # return None
 
     def clean_temporal_avail(prog):
         prog.temporal_avail.clear()
@@ -184,7 +145,7 @@ class Program:
             quadruple = prog.quadruples[prog.PC]
             # print(quadruple)
             opcode = quadruple[0]
-            # print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
+            # print(prog.PC,quadruple[0],quadruple[1],quadruple[2],quadruple[3])
 
             # print(quadruple[0])
             # print(quadruple[1])

@@ -4,16 +4,26 @@ CRT f;
 CRT x;
 CRT a;
 CRT b;
+CRT c;
+CRT d;
 
 f=10;
 x=0;
 a=2;
 b=5;
+c=0;
+d=2;
 
 FOR(f>x,f=f-1):
-    \\FOR(a<b,a=a+1):
-        SH<f>;
-    \\END
+    SH<f>;
+    FOR(a<b,a=a+1):
+        SH<a>;
+        FOR(d>c,d=d-1):
+            SH<d>;
+        END
+        d=2;
+    END
+    a=2;
 END
 
 FINISH
