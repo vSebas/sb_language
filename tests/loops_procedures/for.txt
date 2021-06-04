@@ -1,0 +1,19 @@
+BEGIN
+
+CRT f;
+CRT x;
+CRT a;
+CRT b;
+
+f=10;
+x=0;
+a=2;
+b=5;
+
+FOR(f>x,f=f-1):
+    \\FOR(a<b,a=a+1):
+        SH<f>;
+    \\END
+END
+
+FINISH

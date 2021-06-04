@@ -1,14 +1,21 @@
 BEGIN
 
-CRT INT f;
-CRT INT x;
-CRT INT a;
-CRT INT b;
+CRT f;
+CRT x;
+CRT a;
+CRT b;
 
 f=2;
 x=1;
 a=4;
 b=4;
+
+\\IF(f>x):
+\\    SH<f>;
+\\NOT
+\\    SH<X>;
+\\END
+
 
 IF(f>x):
     f=x;

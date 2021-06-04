@@ -28,8 +28,8 @@ def p_program_exec(p):
     '''
     EXEC : empty
     '''
-    # program.check_intermediate_code()
-    program.code_execution()
+    program.check_intermediate_code()
+    # program.code_execution()
 
 def p_program_begin(p):
     '''
@@ -64,7 +64,7 @@ def p_routine_finish(p):
     ENDFUNC  : RET
     '''
     program.end_procedure(p[1])
-    
+
 
 def p_body(p):
     '''
@@ -101,24 +101,30 @@ def p_st_show_val(p):
     p[0] = program.generate_quadruple("SH",p[1], p[2], p[3], p[4])
     # print(p[3])
 
-# def p_st_show_str(p):
-#     '''
-#     st : SH LT STRING GT
-#     '''
-#     p[0] = program.generate_quadruple(p[1], p[2], p[3], p[4])
-#     # print(p[3])
-
 def p_st_id_declare(p):
     '''
-    st : CRT data_type ID
+    st : CRT ID
     '''
-    program.create_symbol(p[2],p[3])
+    program.create_symbol(p[2])
 
 def p_st_mat(p):
     '''
-    st : CRT data_type ID m
+    st : CRT ID m
     '''
-    program.create_symbol_mat(p[2],p[3],p[4])
+    program.create_symbol_mat(p[2],p[3])
+
+
+# def p_st_id_declare(p):
+#     '''
+#     st : CRT data_type ID
+#     '''
+#     program.create_symbol(p[2],p[3])
+
+# def p_st_mat(p):
+#     '''
+#     st : CRT data_type ID m
+#     '''
+#     program.create_symbol_mat(p[2],p[3],p[4])
 
 def p_m(p):
     '''
@@ -153,10 +159,14 @@ def p_assignment(p):
 def p_mat_assignment(p):
     '''
     mat_assignment : ID m EQUALS ID
+                   | ID m EQUALS ID m
                    | ID m EQUALS log_exp
                    | ID m EQUALS math_exp
     '''
-    p[0] = program.generate_quadruple("DIM_ASSIGNMENT",p[1], p[2], p[3], p[4])
+    if len(p) < 6:
+        p[0] = program.generate_quadruple("DIM_ASSIGNMENT",p[1], p[2], p[3], p[4])
+    else:
+        p[0] = program.generate_quadruple("DIM_ASSIGNMENT",p[1], p[2], p[3], p[4], p[5])
 
     # p[0] = program.id_mat_assignment(p[1],p[2],p[3])
 
@@ -171,31 +181,31 @@ def p_mat_assignment(p):
 #          | empty
 #     '''
 
-def p_cond_if(p):
+def p_cond_if_first(p):
     '''
-    cond : IFBEGIN body IFEND
+    cond : IFFIRST body IFSECOND ENDIF
+    '''
+
+def p_cond_if_second(p):
+    '''
+    cond : IFFIRST body ENDIF
     '''
 
 def p_cond_if_begin(p):
     '''
-    IFBEGIN : IF LPAREN log_exp RPAREN COLON
+    IFFIRST : IF LPAREN log_exp RPAREN COLON
     '''
     program.generate_if_then(p[3])
 
-def p_cond_if_else(p):
+def p_cond_if_first_else(p):
     '''
-    IFEND : ELSE body IFFINISH
+    IFSECOND : NOT body
     '''
-
-def p_cond_else_not(p):
-    '''
-    ELSE : NOT
-    '''
-    program.generate_if_else(p[1])
+    program.generate_if_else()
 
 def p_cond_if_end(p):
     '''
-    IFFINISH : END
+    ENDIF : END
     '''
     program.generate_if_end()
 
@@ -226,11 +236,6 @@ def p_cond_for(p):
     cond : FOR LPAREN EVAL COMA MODIFY RPAREN COLON body FOREND
     '''
 
-# def p_cond_for_init(p):
-#     '''
-#     FORINIT : 
-#     '''
-
 def p_cond_for_evaluate(p):
     '''
     EVAL : log_exp
@@ -240,7 +245,7 @@ def p_cond_for_evaluate(p):
 def p_cond_for_mod(p):
     '''
     MODIFY : assignment
-    '''
+    ''' 
     program.generate_for_mod()
 
 def p_cond_for_end(p):
@@ -377,13 +382,13 @@ def p_math_exp_val(p):
     '''
     p[0] = p[1]
 
-def p_data_type(p):
-    # To declare variables
-    '''
-    data_type : INT
-              | FLT
-    '''
-    p[0] = p[1]
+# def p_data_type(p):
+#     # To declare variables
+#     '''
+#     data_type : INT
+#               | FLT
+#     '''
+#     p[0] = p[1]
 
 def p_val(p):
     # For assignments
@@ -420,7 +425,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/n_dim_variables/matrix.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/program_execution/for.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()

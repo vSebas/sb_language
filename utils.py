@@ -16,7 +16,7 @@ class Program:
         prog.temporal_avail={}
 
         # Generated quadruples in 'compilation'
-        prog.quadruples=[[None, None, None, None]]
+        prog.quadruples=[[None, None, None, None, None]]
 
         # Procedures
         prog.procedures={}
@@ -30,101 +30,92 @@ class Program:
         # Array to save jumps made in loops
         prog.loops_jp_to=[]
 
-        # Eliminar siguientes:
-        prog.symbols_type={}
-        prog.symbols_mat_type={}
-
     def start_program(prog):
         prog.PC=0
         prog.quadruples[0][0] = "GOTO"  # First quadruple
-        prog.quadruples[0][1] = 1       # Can go to the first position as PROCEDURES are located after the main program
+        prog.quadruples[0][2] = 1       # Can go to the first position as PROCEDURES are located after the main program
 
     def end_program(prog):
-        prog.quadruples.append(["ENDPROGRAM",None,None,None])
+        prog.quadruples.append(["ENDPROGRAM",None,None,None,None])
 
     def generate_procedure(prog, quad1):
         dir = len(prog.quadruples)
-        prog.quadruples.append(["PROCEDURE",dir,None,None])
+        prog.quadruples.append(["PROCEDURE",dir,None,None,None])
         prog.procedures[quad1] = dir
-    
+
     def end_procedure(prog, quad1):
-        prog.quadruples.append(["ENDPROCEDURE",None,None,None])
+        prog.quadruples.append(["ENDPROCEDURE",None,None,None,None])
 
     def generate_if_then(prog, quad1):
-        prog.quadruples.append(["GOTOf",quad1,None,None])
+        prog.quadruples.append(["GOTOf",quad1,None,None,None])
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
-        # print(prog.quadruples)
-        # print("Dirección GOTOf:",prog.loops_jp_to)
-        
-    def generate_if_else(prog, quad1):
+
+    def generate_if_else(prog):
         dir = prog.loops_jp_to.pop(0)
-        prog.quadruples.append(["GOTO",None,None,None])
-        prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
+        prog.quadruples.append(["GOTO",None,None,None,None])
         prog.quadruples[dir][2] = len(prog.quadruples)
-        # print(prog.quadruples)
-        # print("Dirección GOTO:",prog.loops_jp_to)
-        # print("Rellenar GOTOf:",prog.quadruples[dir][1])
+        prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
 
     def generate_if_end(prog):
         dir = prog.loops_jp_to.pop(0)
-        prog.quadruples[dir][1] = len(prog.quadruples)
-        # print(prog.quadruples)
-        # print("Rellenar GOTO:",prog.quadruples[dir][1])
+        prog.quadruples[dir][2] = len(prog.quadruples)
 
     def generate_while_begin(prog,quad1):
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
-        prog.quadruples.append(["GOTOf",quad1,None,None])
+        prog.quadruples.append(["GOTOf",quad1,None,None,None])
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
 
     def generate_while_end(prog):
         dir = prog.loops_jp_to.pop(0)
         ret = prog.loops_jp_to.pop(0)
-        prog.quadruples.append(["GOTO",ret,None,None])
+        prog.quadruples.append(["GOTO",None,ret,None,None])
         prog.quadruples[dir][2] = len(prog.quadruples)
 
     def generate_for_eval(prog, quad1):
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
-        prog.quadruples.append(["GOTOf",quad1,None,None])
+        prog.quadruples.append(["GOTOf",quad1,None,None,None])      # Get out (0)
+        prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
+        prog.quadruples.append(["GOTO",None,None,None,None])        # Go to the statement (1)
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
 
     def generate_for_mod(prog):
-        prog.quadruples.append(["GOTO",None,None,None])
+        prog.quadruples.append(["GOTO",None,None,None,None])        # Go to the beginning of FOR (3)
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
-        dir = prog.loops_jp_to.pop(2)
-        ret = prog.loops_jp_to.pop(0)
-        prog.quadruples.append(["GOTO",dir,None,None])
-        prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
-        prog.quadruples[ret][1] = len(prog.quadruples)
+        prog.loops_jp_to.insert(0,len(prog.quadruples))             # So we can get right to the next instruction
 
     def generate_for_end(prog):
-        dir = prog.loops_jp_to.pop(0)
-        ret = prog.loops_jp_to.pop(0)
-        prog.quadruples.append(["GOTO",dir,None,None])
+        dir0 = prog.loops_jp_to.pop(0)
+        dir1 = prog.loops_jp_to.pop(0)
+        dir2 = prog.loops_jp_to.pop(0)
+        dir3 = prog.loops_jp_to.pop(0)
+        dir4 = prog.loops_jp_to.pop(0)
+        prog.quadruples.append(["GOTO",None,dir2+1,None,None])        # Go to previous statement and MODIFY index value (2)
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
-        prog.quadruples[ret][2] = len(prog.quadruples)
+        prog.quadruples[dir1][2] = dir4                             # Back to the top
+        prog.quadruples[dir2][2] = dir0                             # To jump directly to the statements
+        prog.quadruples[dir3][2] = len(prog.quadruples)             # Fill GOTOf
 
-    def generate_quadruple(prog,type,quad1,quad2,quad3=None,quad4=None):
+    def generate_quadruple(prog,type,quad1,quad2,quad3=None,quad4=None,quad5=None):
         pos=len(prog.temporal_avail)
         prog.temporal_avail[f"T{pos}"]=None
 
         if (type == "MATH_EXP" or type == "LOG_EXP"):
             if quad3 is not None:
-                prog.quadruples.append([quad2,quad1,quad3,f"T{pos}"])
+                prog.quadruples.append([quad2,quad1,quad3,f"T{pos}",None])
             else:
-                prog.quadruples.append([quad1,None,quad2,f"T{pos}"])
+                prog.quadruples.append([quad1,None,quad2,f"T{pos}",None])
             return f"T{pos}"
         elif (type == "CALL"):
-            prog.quadruples.append([quad1,quad2,None,None])
+            prog.quadruples.append([quad1,quad2,None,None,None])
         elif (type == "RD" or type == "SH"):
-            prog.quadruples.append([quad1,quad3,None,None])
+            prog.quadruples.append([quad1,quad3,None,None,None])
         elif (type == "SIMPLE_ASSIGNMENT"):
-            prog.quadruples.append([quad2,quad1,None,quad3])
+            prog.quadruples.append([quad2,quad1,None,quad3,None])
         elif (type == "DIM_ASSIGNMENT"):
-            dir = prog.ret_mat_dir(quad1,quad2)
-            prog.quadruples.append([quad3,quad1,dir,quad4])
-            
+            prog.quadruples.append([quad3,quad1,quad2,quad4,quad5])
+
         return None
-        
+
         # if quad4 is None: # There is a RD or SH instruction
         #     if quad3 is not None:
         #         if quad2 != "=":
@@ -174,8 +165,10 @@ class Program:
 
     def check_intermediate_code(prog):
         print("Check:")
+        i = 0
         for quadruple in prog.quadruples:
-            print(quadruple[0], quadruple[1], quadruple[2], quadruple[3])
+            print(i,":",quadruple[0], quadruple[1], quadruple[2], quadruple[3])
+            i += 1
 
     def code_execution(prog):
         quad1_flag = ""
@@ -187,7 +180,9 @@ class Program:
 
         while(opcode != "ENDPROGRAM"):
             jump = 0
+            # print(prog.PC)
             quadruple = prog.quadruples[prog.PC]
+            # print(quadruple)
             opcode = quadruple[0]
             # print(quadruple[0],quadruple[1],quadruple[2],quadruple[3])
 
@@ -198,7 +193,8 @@ class Program:
                 quad1_flag = "symbol"
             elif quadruple[1] in prog.symbols_mat.keys():
                 if opcode != "SH":
-                    quadruple1 = prog.symbols_mat[quadruple[1]][quadruple[2]]
+                    dir = prog.ret_mat_dir(quadruple[1],quadruple[2])
+                    quadruple1 = prog.symbols_mat[quadruple[1]][dir]
                 else:
                     quadruple1 = prog.symbols_mat[quadruple[1]]
                 quad1_flag = "mat_symbol"
@@ -212,7 +208,7 @@ class Program:
                 index = prog.constants.index(quadruple[1])
                 quadruple1 =  prog.constants[index]
                 quad1_flag = "constant"
-            
+
             # else:
             #     quad1_flag = ""
 
@@ -230,7 +226,7 @@ class Program:
                     index = prog.constants.index(quadruple[2])
                     quadruple2 =  prog.constants[index]
                     quad2_flag = "constant"
-                
+
                 # else:
                 #     quad2_flag = ""
 
@@ -239,7 +235,10 @@ class Program:
                     quadruple3 =  prog.symbols[quadruple[3]]
                     quad3_flag = "symbol"
                 elif quadruple[3] in prog.symbols_mat.keys():
-                    quadruple3 =  prog.symbols_mat[quadruple[3]][quadruple[2]]
+                    dir = prog.ret_mat_dir(quadruple[3],quadruple[2])
+                    quadruple3 = prog.symbols_mat[quadruple[3]][dir]
+
+                    # quadruple3 =  prog.symbols_mat[quadruple[3]][quadruple[2]]
                     quad3_flag = "mat_symbol"
                 elif quadruple[3] in prog.temporal_avail.keys():
                     quadruple3 =  prog.temporal_avail[quadruple[3]]
@@ -251,6 +250,10 @@ class Program:
                 # else:
                 #     quad3_flag = ""
 
+            if quadruple[4] is not None:
+                print("quad4",quadruple[4])
+                dir2 = prog.ret_mat_dir(quadruple[1],quadruple[4])
+                quadruple4 = prog.symbols_mat[quadruple[1]][dir2]
 
             if opcode == '+':
                 quadruple3 = quadruple1 + quadruple2
@@ -284,7 +287,16 @@ class Program:
             elif opcode == '=/': # IS DIFFERENT?
                 quadruple3 = quadruple1 != quadruple2
             elif opcode == '=':  # ASSIGN
-                quadruple1 = quadruple3
+                # if quadruple[5] is None:
+                if quadruple[4] is not None:
+                    quadruple1 = quadruple4
+                else:
+                    quadruple1 = quadruple3
+                # else:
+                #     dir3 = prog.ret_mat_dir(quadruple[4],quadruple[5])
+                #     quadruple4 = prog.symbols_mat[quadruple[4]][dir3]
+                #     quadruple1 = quadruple4
+
                 # print("=",quadruple1)
             elif opcode == "RD":
                 quadruple1 = input("Input:")
@@ -304,7 +316,7 @@ class Program:
                 # print("ENDPROC")
                 prog.PC = prog.PCs.pop(0) # Devolver PC a donde estaba
             elif opcode == 'GOTO':
-                prog.PC = quadruple[1]
+                prog.PC = quadruple[2]
                 jump = 1
             elif opcode == 'GOTOf':
                 # print(quadruple1)
@@ -318,13 +330,13 @@ class Program:
                 exit()
 
             # print(prog.PC)
-            
+
             # print(quad1_flag,quad2_flag,quad3_flag)
 
             if (not jump):
                 if quad3_flag == "temporal":
                     prog.temporal_avail[quadruple[3]] = quadruple3
-                # else:
+                # elif:
                 #     prog.temporal_avail[quadruple[3]] = quadruple3
 
                 if quad2_flag == "symbol":
@@ -338,7 +350,7 @@ class Program:
                     if opcode != "SH":
                         # print(quadruple1,quadruple2,quadruple3)
                         # print(prog.symbols_mat[quadruple[1]])
-                        prog.symbols_mat[quadruple[1]][quadruple[2]] = quadruple1
+                        prog.symbols_mat[quadruple[1]][dir] = quadruple1
                 elif quad1_flag == "temporal":
                     prog.temporal_avail[quadruple[1]] = quadruple1
 
@@ -362,7 +374,7 @@ class Program:
         else:
             prog.constants.append(val)
             return val
-    
+
     # def oper_manager(prog,operand1,oper,operand2):
     #     if   oper == '+':
     #         return operand1 + operand2
@@ -379,20 +391,20 @@ class Program:
         # Dictionaries are unordered, but who cares
         i=0
         for symbol in prog.symbols_type:
-            print(i,symbol,prog.symbols_type[symbol])
+            print(i,symbol)
             i+=1
-    
-    def create_symbol(prog,data_type,symbol,assignment=None):
-        if data_type != "INT" and data_type != "FLT":
-            print("Invalid datatype!")
+
+    def create_symbol(prog,symbol):
+        # if data_type != "INT" and data_type != "FLT":
+        #     print("Invalid datatype!")
+        # else:
+        if symbol not in prog.symbols:
+            prog.symbols[symbol] = None
+            # prog.symbols_type[symbol] = data_type
+            # prog.symbols[symbol] = assignment
         else:
-            if symbol not in prog.symbols:
-                prog.symbols[symbol] = None
-                prog.symbols_type[symbol] = data_type
-                prog.symbols[symbol] = assignment
-            else:
-                print(f"ERROR: Already existent variable! --> {symbol}")
-    
+            print(f"ERROR: Already existent variable! --> {symbol}")
+
     def check_symbol_dim(prog,dim):
         # if dim2 is not None:
         #     if dim3 is not None:
@@ -407,7 +419,7 @@ class Program:
         elif len(dim) == 8:
             return dim[2],dim[4],dim[6]
 
-    def create_symbol_mat(prog,data_type,symbol,dim):
+    def create_symbol_mat(prog,symbol,dim):
         size = 0
         if type(dim) != int:
             size = len(dim)
@@ -417,18 +429,32 @@ class Program:
         dims = []
         base = []
 
+        # print(dim)
+        # print(prog.symbols)
         if size == 3:
             dim1,dim2,dim3 = dim
+            if(type(dim1) == str):
+                dim1 = prog.symbols[dim1]
+            if(type(dim2) == str):
+                dim2 = prog.symbols[dim2]
+            if(type(dim3) == str):
+                dim3 = prog.symbols[dim3]
             prog.symbols_mat[symbol] =  [None]*dim1*dim2*dim3 #  [None]*(dim1*dim2*dim3)
             dims = [dim2*dim3,dim3]
             base = [0,0,0]
         elif size == 2:
             dim1,dim2 = dim
+            if(type(dim1) == str):
+                dim1 = prog.symbols[dim1]
+            if(type(dim2) == str):
+                dim2 = prog.symbols[dim2]
             base = [0,0]
             dims = [dim2]
             prog.symbols_mat[symbol] = [None]*dim1*dim2  # [None]*(dim1*dim2)
         else:
             dim1 = dim
+            if(type(dim1) == str):
+                dim1 = prog.symbols[dim1]
             base = [0]
             dims = [1]
             prog.symbols_mat[symbol] = [None]*dim
@@ -437,7 +463,7 @@ class Program:
 
         # print(prog.symbols_mat[symbol])
         # print(prog.symbols_mat_dim[symbol])
-    
+
     def ret_mat_dir(prog,symbol,dim):
         size = 0
         x = 0
@@ -454,8 +480,15 @@ class Program:
         else:
             x = dim
 
-        # print(x,y,z)
+        if(type(x) == str):
+            x = prog.symbols[x]
+        if(type(y) == str):
+            y = prog.symbols[y]
+        if(type(z) == str):
+            z = prog.symbols[z]
 
+        # print(x,y,z)
+        # print(prog.symbols_mat_dim[symbol])
         if y != None:
             if z != None:
                 # print(symbol)
@@ -582,7 +615,7 @@ class Program:
     #                         for elem in two_dim_elem:
     #                             if type(elem) == list:
     #                                 extra_dim = len(elem)-1
-            
+
     #         if type(mat) is tuple:
     #             if len(mat) == 2:
     #                 d_rows, d_cols = mat

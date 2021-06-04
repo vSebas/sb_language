@@ -1,0 +1,62 @@
+BEGIN
+
+CRT INT dim_Ax;
+dim_Ax = 5;
+CRT INT dim_Ay;
+dim_Ay = 5;
+
+CRT INT A(5,5);
+CRT INT B(5,5);
+CRT INT res(5,5);
+
+CRT INT menu;
+CRT INT i;
+CRT INT j;
+
+CRT INT aux;
+
+i=0;
+WHILE(i < dim_Ax):
+    j=0;
+    WHILE(j < dim_Ay):
+        A(i,j) = 1;
+        j=j+1;
+    END
+    i=i+1;
+END
+\\SH<A>;
+
+i=0;
+WHILE(i < dim_Ax):
+    j=0;
+    WHILE(j < dim_Ay):
+        B(i,j) = 2;
+        j=j+1;
+    END
+    i=i+1;
+END
+\\SH<B>;
+
+i=0;
+j=0;
+
+\\ 1: opcion A
+\\ otra cosa : opcion B
+RD<menu>;
+
+IF(menu =? 1):
+    CALL SUM_MAT;
+NOT
+
+END
+
+FINISH
+
+FUNC SUM_MAT:
+    \\SH<dim_Ax>;
+    i=0;
+    j=0;
+    SH<B>;
+    res(0,0)=B(i,j);
+    SH<res>;
+RET
