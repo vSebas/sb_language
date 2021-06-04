@@ -1,28 +1,78 @@
 BEGIN
 
-CRT INT arr(2);
-CRT INT arr1(2,2);
-CRT INT arr2(2,2,2);
+CRT arr(2);
+CRT arr1(2,2);
+CRT arr2(2,2,2);
+CRT mat(2,2);
 
-arr(0) = 1;
-arr(1) = 2;
+CRT i;
+CRT j;
+CRT k;
+CRT dim;
+CRT val;
+i=0;
+j=0;
+k=0;
+dim=2;
 
-arr1(0,0) = 1;
-arr1(0,1) = 2;
-arr1(1,0) = 3;
-arr1(1,1) = 4;
-
-arr2(0,0,0) = 1;
-arr2(0,0,1) = 2;
-arr2(0,1,0) = 3;
-arr2(0,1,1) = 4;
-arr2(1,0,0) = 5;
-arr2(1,0,1) = 6;
-arr2(1,1,0) = 7;
-arr2(1,1,1) = 8;
-
+FOR(i<2,i=i+1):
+    arr(i) = i;
+END
 SH <arr>;
+
+i=0;
+FOR(i<2,i=i+1):
+    FOR(j<2,j=j+1):
+        arr1(i,j) = j;
+    END
+    j=0;
+END
 SH <arr1>;
+
+i=0;
+FOR(i<2,i=i+1):
+    FOR(j<2,j=j+1):
+        FOR(k<2,k=k+1):
+            arr2(i,j,k) = j;
+        END
+        k=0;
+    END
+    j=0;
+END
 SH <arr2>;
+
+\\mat(0,0) = arr1(0,0);
+\\mat(0,1) = arr1(0,1);
+\\mat(1,0) = arr1(1,0);
+\\mat(1,1) = arr1(1,1);
+\\SH <mat>;
+
+i=0;
+FOR(i<2,i=i+1):
+    FOR(j<2,j=j+1):
+        mat(i,j) = arr1(i,j);
+    END
+    j=0;
+END
+SH <mat>;
+val = mat(0,1);
+SH <val>;
+
+\\arr(0) = 1;
+\\arr(1) = 2;
+\\
+\\arr1(0,0) = 1;
+\\arr1(0,1) = 2;
+\\arr1(1,0) = 3;
+\\arr1(1,1) = 4;
+\\
+\\arr2(0,0,0) = 1;
+\\arr2(0,0,1) = 2;
+\\arr2(0,1,0) = 3;
+\\arr2(0,1,1) = 4;
+\\arr2(1,0,0) = 5;
+\\arr2(1,0,1) = 6;
+\\arr2(1,1,0) = 7;
+\\arr2(1,1,1) = 8;
 
 FINISH

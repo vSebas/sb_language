@@ -151,10 +151,14 @@ def p_st_asmnt(p):
 def p_assignment(p):
     '''
     assignment : ID EQUALS ID
+               | ID EQUALS ID m
                | ID EQUALS log_exp
                | ID EQUALS math_exp
     '''
-    p[0] = program.generate_quadruple("SIMPLE_ASSIGNMENT",p[1], p[2], p[3])
+    if len(p) < 5:
+        p[0] = program.generate_quadruple("SIMPLE_ASSIGNMENT",p[1], p[2], p[3])
+    else:
+        p[0] = program.generate_quadruple("SIMPLE_ASSIGNMENT",p[1], p[2], p[3], p[4])
 
 def p_mat_assignment(p):
     '''
@@ -171,16 +175,6 @@ def p_mat_assignment(p):
     # p[0] = program.id_mat_assignment(p[1],p[2],p[3])
 
 # CONDITIONALS
-# def p_cond(p):
-#     '''
-#     cond : IF LPAREN log_exp RPAREN body ent END
-#          | WHILE LPAREN log_exp RPAREN body END
-#          | DO body UNTIL LPAREN log_exp RPAREN END
-#          | FOR LPAREN log_exp COMA math_exp RPAREN body END
-#     ent  : NOT body
-#          | empty
-#     '''
-
 def p_cond_if_first(p):
     '''
     cond : IFFIRST body IFSECOND ENDIF
@@ -425,7 +419,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/loops_procedures/for.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/n_dim_variables/matrix.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()
