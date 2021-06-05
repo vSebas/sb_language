@@ -2,7 +2,7 @@
 
 Language created with PLY for the Languages and Translators course
 
-Final programs can be found in tests/final_tests/
+Final programs can be found under tests/final_tests/
 
 ## Use
 
