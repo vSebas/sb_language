@@ -1,0 +1,22 @@
+BEGIN
+
+    CRT cubo(2,2,2);
+    CRT lee;
+    CRT i;
+    CRT j;
+    CRT k;
+
+    i=0;
+    FOR(i<2,i=i+1):
+        j=0;
+        FOR(j<2,j=j+1):
+            k=0;
+            FOR(k<2,k=k+1):
+                RD<lee>;
+                cubo(i,j,k) = lee*2;
+            END
+        END
+    END
+    SH<cubo>;
+    
+FINISH

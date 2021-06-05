@@ -1,41 +1,39 @@
 BEGIN
 
-CRT INT dim_Ax;
+CRT dim_Ax;
 dim_Ax = 5;
-CRT INT dim_Ay;
+CRT dim_Ay;
 dim_Ay = 5;
 
-CRT INT A(5,5);
-CRT INT B(5,5);
-CRT INT res(5,5);
+CRT A(5,5);
+CRT B(5,5);
+CRT res(5,5);
 
-CRT INT menu;
-CRT INT i;
-CRT INT j;
+CRT menu;
+CRT oper1;
+CRT oper2;
+CRT i;
+CRT j;
 
-CRT INT aux;
+CRT aux;
 
 i=0;
-WHILE(i < dim_Ax):
+FOR(i < dim_Ax,i=i+1):
     j=0;
-    WHILE(j < dim_Ay):
+    FOR(j < dim_Ay,j=j+1):
         A(i,j) = 1;
-        j=j+1;
     END
-    i=i+1;
 END
-\\SH<A>;
+SH<A>;
 
 i=0;
-WHILE(i < dim_Ax):
+FOR(i < dim_Ax,i=i+1):
     j=0;
-    WHILE(j < dim_Ay):
+    FOR(j < dim_Ay,j=j+1):
         B(i,j) = 2;
-        j=j+1;
     END
-    i=i+1;
 END
-\\SH<B>;
+SH<B>;
 
 i=0;
 j=0;
@@ -47,16 +45,44 @@ RD<menu>;
 IF(menu =? 1):
     CALL SUM_MAT;
 NOT
-
+    CALL MULT_MAT;
 END
 
 FINISH
 
 FUNC SUM_MAT:
-    \\SH<dim_Ax>;
     i=0;
-    j=0;
-    SH<B>;
-    res(0,0)=B(i,j);
+    FOR(i < dim_Ax,i=i+1):
+        j=0;
+        FOR(j < dim_Ay,j=j+1):
+            oper1 = A(i,j);
+            oper2 = B(i,j);
+            oper2 = oper2 + oper1;
+            res(i,j) = oper2;
+        END
+    END
+    SH<res>;
+RET
+
+FUNC MULT_MAT:
+    CRT oper3;
+    CRT u;
+    CRT k;
+    oper3 = 0;
+    i=0;
+    FOR(i < 5,i=i+1):
+        j=0;
+        FOR(j < 5,j=j+1):
+            k=0;
+            FOR(k < 5,k=k+1):
+                oper1 = A(j,k);
+                oper2 = B(k,j);
+                oper1 = oper1 * oper2;
+                oper3 = oper3 + oper1;
+            END
+            res(i,j) = oper3;
+            oper3 = 0;
+        END
+    END
     SH<res>;
 RET

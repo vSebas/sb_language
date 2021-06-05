@@ -1,0 +1,56 @@
+BEGIN
+
+    CRT vector(10);
+    CRT menu;
+    CRT val;
+    CRT i;
+    i=0;
+    FOR(i<10,i=i+1):
+        RD<val>;
+        vector(i)=val;
+    END
+
+    CALL SORT;
+
+    RD<menu>;
+    \\ Desea ordenar otro vector?
+    \\ 1: SI
+
+    IF(menu =? 1):
+    i=0;
+    FOR(i<10,i=i+1):
+        RD<val>;
+        vector(i)=val;
+    END
+
+    CALL SORT;
+    END
+
+
+
+FINISH
+
+
+
+
+FUNC SORT:
+
+CRT j;
+CRT aux1;
+CRT aux2;
+i=0;
+FOR(i<10,i=i+1):
+    j=i+1;
+    FOR(j<10,j=j+1):
+        aux1 = vector(i);
+        aux2 = vector(j);
+        IF(aux2<aux1):
+            vector(i) = aux2;
+            vector(j) = aux1;
+        END
+    END
+END
+SH<vector>;
+
+
+RET

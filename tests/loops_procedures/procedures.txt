@@ -1,13 +1,13 @@
 BEGIN
 
-CRT INT a;
-CRT INT b;
-CRT INT c;
-CRT INT d;
-CRT INT e;
-CRT INT f;
-CRT INT g;
-CRT INT h;
+CRT a;
+CRT b;
+CRT c;
+CRT d;
+CRT e;
+CRT f;
+CRT g;
+CRT h;
 
 a=1;
 b=2;

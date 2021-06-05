@@ -13,25 +13,19 @@ b=4;
 \\IF(f>x):
 \\    SH<f>;
 \\NOT
-\\    SH<X>;
+\\    SH<x>;
 \\END
 
-
 IF(f>x):
-    f=x;
     SH<f>;
     IF(a<b):
-        f=a;
-        SH<f>;
+        SH<x>;
     NOT
-        f=b+1;
+        SH<a>;
     END
-    NOT
-        SH<f>;
-        f=f+x;
-        SH<f>;
+NOT
+    f=f+1;
+    SH<f>;
 END
-
-SH<f>;
 
 FINISH

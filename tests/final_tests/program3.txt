@@ -1,0 +1,63 @@
+BEGIN
+
+    CRT menu;
+    CRT x;
+    CRT y;
+    CRT f;
+    CRT aux;
+    CRT aux1;
+    CRT aux2;
+    CRT res;
+
+    \\ 1: opcion a
+    \\ 2: opcion b
+    \\ 3: opcion c
+
+    RD<menu>;
+
+    IF(menu =? 1):
+        \\ Factorial
+        RD<x>;
+        aux=x;
+        CALL Factorial;
+        SH<f>;
+    NOT
+        IF(menu =? 2):
+            \\ Power
+            RD<x>;
+            RD<y>;
+            f = x ^ y;
+            SH<f>;
+        NOT
+            IF(menu =? 3):
+                \\ Sumatoria de Taylor
+                CALL Taylor;
+
+            END
+        END
+    END
+
+
+FINISH
+
+FUNC Factorial:
+    f=1;
+    FOR(aux>1,aux=aux-1):
+        f=f*aux;
+    END
+RET
+
+FUNC Taylor:
+    y = 0;
+    res = 0;
+    RD<x>;
+    FOR(y<=10,y=y+1):
+        aux1 = x ^ y;
+        aux = y;
+        CALL Factorial;
+        aux2 = f;
+        aux1 = aux1/aux2;
+        res = res + aux1;
+    END
+    SH<res>;
+RET

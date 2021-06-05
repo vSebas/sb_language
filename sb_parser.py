@@ -177,7 +177,7 @@ def p_mat_assignment(p):
 # CONDITIONALS
 def p_cond_if_first(p):
     '''
-    cond : IFFIRST body IFSECOND ENDIF
+    cond : IFFIRST body IFSECOND body ENDIF
     '''
 
 def p_cond_if_second(p):
@@ -193,7 +193,7 @@ def p_cond_if_begin(p):
 
 def p_cond_if_first_else(p):
     '''
-    IFSECOND : NOT body
+    IFSECOND : NOT
     '''
     program.generate_if_else()
 
@@ -419,7 +419,7 @@ def p_error(p):
 parser = yacc.yacc()
 
 try:
-    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/n_dim_variables/matrix.txt",  encoding="utf8") as f:
+    with open("C:/Users/visem/Documents/Carrera/Octavo_semestre/Lenguajes/Proyecto/ply/project/tests/final_tests/program4.txt",  encoding="utf8") as f:
         file = f.read()
     parser.parse(file)
     # program.print_symbols()

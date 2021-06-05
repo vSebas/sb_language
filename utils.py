@@ -53,8 +53,8 @@ class Program:
     def generate_if_else(prog):
         dir = prog.loops_jp_to.pop(0)
         prog.quadruples.append(["GOTO",None,None,None,None])
-        prog.quadruples[dir][2] = len(prog.quadruples)
         prog.loops_jp_to.insert(0,len(prog.quadruples)-1)
+        prog.quadruples[dir][2] = len(prog.quadruples)
 
     def generate_if_end(prog):
         dir = prog.loops_jp_to.pop(0)
@@ -110,7 +110,6 @@ class Program:
             prog.quadruples.append([quad2,quad1,None,quad3,quad4])
         elif (type == "DIM_ASSIGNMENT"):
             prog.quadruples.append([quad3,quad1,quad2,quad4,quad5])
-
         return None
 
     def clean_temporal_avail(prog):
@@ -261,7 +260,6 @@ class Program:
                 jump = 1
             elif opcode == 'GOTOf':
                 # print(quadruple1)
-                # print(quadruple2)
                 if not quadruple1:
                     prog.PC = quadruple[2]
                     jump = 1
