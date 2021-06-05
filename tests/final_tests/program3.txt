@@ -37,6 +37,32 @@ BEGIN
         END
     END
 
+    \\ Desea realizar otro calculo? Indique cual
+    \\ De no ser asi, presione cualquier otro numero
+    RD<menu>;
+
+    IF(menu =? 1):
+        \\ Factorial
+        RD<x>;
+        aux=x;
+        CALL Factorial;
+        SH<f>;
+    NOT
+        IF(menu =? 2):
+            \\ Power
+            RD<x>;
+            RD<y>;
+            f = x ^ y;
+            SH<f>;
+        NOT
+            IF(menu =? 3):
+                \\ Sumatoria de Taylor
+                CALL Taylor;
+
+            END
+        END
+    END
+
 
 FINISH
 

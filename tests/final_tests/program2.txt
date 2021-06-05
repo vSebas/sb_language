@@ -9,6 +9,7 @@ BEGIN
         RD<val>;
         vector(i)=val;
     END
+    SH<vector>;
 
     CALL SORT;
 
@@ -22,6 +23,7 @@ BEGIN
         RD<val>;
         vector(i)=val;
     END
+    SH<vector>;
 
     CALL SORT;
     END
